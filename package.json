@@ -9,7 +9,7 @@
     "dev:server": "tsx watch server/index.ts",
     "build": "tsc -b && vite build && tsc -p tsconfig.server.json",
     "brand": "tsx scripts/extract-brand.ts",
-    "start": "node dist-server/server/index.js",
+    "start": "node dist-server/index.js",
     "lint": "oxlint",
     "preview": "vite preview"
   },
