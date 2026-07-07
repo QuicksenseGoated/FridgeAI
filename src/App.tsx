@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { AppHeader } from "./components/AppHeader";
+import { InstallApp } from "./components/InstallApp";
 import { LoadingOverlay, type LoadingPhase } from "./components/LoadingOverlay";
 import { PhotoCapture } from "./components/PhotoCapture";
 import { ScanResults } from "./components/ScanResults";
@@ -109,6 +110,7 @@ export default function App() {
   return (
     <div className="shell">
       <AppHeader health={health} />
+      <InstallApp />
       <StepBar current={currentStep} />
 
       <main className="main">

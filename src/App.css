@@ -69,6 +69,62 @@
   gap: 8px;
 }
 
+.install-banner {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+  margin: -8px 0 8px;
+  padding: 14px 16px;
+  border: 1px solid rgba(51, 214, 255, 0.28);
+  border-radius: 16px;
+  background: linear-gradient(
+    180deg,
+    rgba(51, 214, 255, 0.08),
+    rgba(16, 30, 52, 0.92)
+  );
+  text-align: center;
+}
+
+.install-banner--ios {
+  gap: 10px;
+}
+
+.install-banner__text {
+  margin: 0;
+  color: var(--text);
+  font-size: 0.9rem;
+  line-height: 1.45;
+  max-width: 24rem;
+}
+
+.install-banner__actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: center;
+  gap: 10px;
+}
+
+.install-banner__btn {
+  min-width: 132px;
+}
+
+.install-banner__dismiss {
+  border: 0;
+  background: transparent;
+  color: var(--muted);
+  font: inherit;
+  font-size: 0.84rem;
+  cursor: pointer;
+  padding: 6px 8px;
+}
+
+.install-banner__dismiss:hover {
+  color: var(--text);
+}
+
 .status {
   display: inline-flex;
   align-items: center;
