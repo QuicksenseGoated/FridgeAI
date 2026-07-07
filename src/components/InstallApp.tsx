@@ -16,11 +16,38 @@ function isIOS() {
   return /iPad|iPhone|iPod/.test(navigator.userAgent);
 }
 
+function isSafari() {
+  const ua = navigator.userAgent;
+  return /Safari/i.test(ua) && !/CriOS|FxiOS|EdgiOS|OPiOS|Chrome/i.test(ua);
+}
+
+function isMobile() {
+  return (
+    isIOS() ||
+    /Android/i.test(navigator.userAgent) ||
+    window.matchMedia("(max-width: 768px)").matches
+  );
+}
+
+function isInAppBrowser() {
+  return /FBAN|FBAV|Instagram|Line\/|Twitter|Snapchat|TikTok|WhatsApp/i.test(
+    navigator.userAgent,
+  );
+}
+
 export function InstallApp() {
   const [installPrompt, setInstallPrompt] =
     useState<BeforeInstallPromptEvent | null>(null);
   const [installed, setInstalled] = useState(isStandalone);
-  const [dismissed, setDismissed] = useState(false);
+  const [mobile] = useState(isMobile);
+
+  useEffect(() => {
+    document.body.classList.toggle("has-install-bar", mobile && !installed);
+
+    return () => {
+      document.body.classList.remove("has-install-bar");
+    };
+  }, [installed, mobile]);
 
   useEffect(() => {
     const onInstallPrompt = (event: Event) => {
@@ -42,60 +69,89 @@ export function InstallApp() {
     };
   }, []);
 
-  if (installed || dismissed) {
+  if (installed || !mobile) {
     return null;
   }
 
-  if (installPrompt) {
+  if (isInAppBrowser()) {
     return (
-      <div className="install-banner">
-        <p className="install-banner__text">
-          Install Fridge AI for a full-screen app on your home screen.
+      <div className="install-bar">
+        <p className="install-bar__title">Install Fridge AI</p>
+        <p className="install-bar__text">
+          Open this link in <strong>Safari</strong> or <strong>Chrome</strong>{" "}
+          first. In-app browsers cannot install apps.
         </p>
-        <div className="install-banner__actions">
-          <button
-            type="button"
-            className="btn btn--primary install-banner__btn"
-            onClick={async () => {
-              await installPrompt.prompt();
-              const choice = await installPrompt.userChoice;
-              if (choice.outcome === "accepted") {
-                setInstalled(true);
-              }
-              setInstallPrompt(null);
-            }}
-          >
-            Install app
-          </button>
-          <button
-            type="button"
-            className="install-banner__dismiss"
-            onClick={() => setDismissed(true)}
-          >
-            Not now
-          </button>
-        </div>
       </div>
     );
   }
 
-  if (isIOS()) {
+  if (installPrompt) {
     return (
-      <div className="install-banner install-banner--ios">
-        <p className="install-banner__text">
-          Tap <strong>Share</strong> → <strong>Add to Home Screen</strong> to
-          install Fridge AI like a real app.
+      <div className="install-bar">
+        <p className="install-bar__title">Install Fridge AI</p>
+        <p className="install-bar__text">
+          Add it to your home screen for a full-screen app experience.
         </p>
         <button
           type="button"
-          className="install-banner__dismiss"
-          onClick={() => setDismissed(true)}
+          className="btn btn--primary install-bar__btn"
+          onClick={async () => {
+            await installPrompt.prompt();
+            const choice = await installPrompt.userChoice;
+            if (choice.outcome === "accepted") {
+              setInstalled(true);
+            }
+            setInstallPrompt(null);
+          }}
         >
-          Got it
+          Install app
         </button>
       </div>
     );
   }
 
-  return null;
+  if (isIOS()) {
+    if (!isSafari()) {
+      return (
+        <div className="install-bar">
+          <p className="install-bar__title">Install on iPhone</p>
+          <p className="install-bar__text">
+            Copy your link, open <strong>Safari</strong>, paste it, then tap{" "}
+            <strong>Share</strong> → <strong>Add to Home Screen</strong>.
+          </p>
+        </div>
+      );
+    }
+
+    return (
+      <div className="install-bar">
+        <p className="install-bar__title">Install on iPhone</p>
+        <ol className="install-bar__steps">
+          <li>
+            Tap <strong>Share</strong> (square with arrow at the bottom)
+          </li>
+          <li>
+            Scroll and tap <strong>Add to Home Screen</strong>
+          </li>
+          <li>
+            Tap <strong>Add</strong>
+          </li>
+        </ol>
+        <p className="install-bar__note">
+          That home screen icon is the installed app. iPhone has no App Store
+          download for web apps.
+        </p>
+      </div>
+    );
+  }
+
+  return (
+    <div className="install-bar">
+      <p className="install-bar__title">Install Fridge AI</p>
+      <p className="install-bar__text">
+        Tap the browser menu <strong>⋮</strong>, then choose{" "}
+        <strong>Install app</strong> or <strong>Add to Home screen</strong>.
+      </p>
+    </div>
+  );
 }

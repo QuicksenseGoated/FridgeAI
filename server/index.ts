@@ -66,6 +66,17 @@ app.post("/api/scan-fridge", scanFridgeHandler);
 app.get("/api/youtube-search", youtubeSearchHandler);
 
 if (isProduction) {
+  app.get("/sw.js", (_req, res) => {
+    res.setHeader("Cache-Control", "no-cache");
+    res.setHeader("Service-Worker-Allowed", "/");
+    res.sendFile(path.join(distDir, "sw.js"));
+  });
+
+  app.get("/manifest.webmanifest", (_req, res) => {
+    res.type("application/manifest+json");
+    res.sendFile(path.join(distDir, "manifest.webmanifest"));
+  });
+
   app.use(express.static(distDir, { index: false }));
 
   app.get("/{*path}", (req, res, next) => {
