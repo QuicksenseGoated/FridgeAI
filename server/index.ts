@@ -68,7 +68,7 @@ app.get("/api/youtube-search", youtubeSearchHandler);
 if (isProduction) {
   app.use(express.static(distDir, { index: false }));
 
-  app.get("*", (req, res, next) => {
+  app.get("/{*path}", (req, res, next) => {
     if (req.path.startsWith("/api")) {
       next();
       return;
