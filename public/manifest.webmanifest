@@ -1,32 +1,27 @@
 {
   "name": "Fridge AI",
   "short_name": "Fridge AI",
-  "description": "Smart fridge. Smarter you. Scan your fridge and get meal ideas.",
+  "description": "Your friendly fridge helper! Snap a photo and get yummy meal ideas.",
   "start_url": "/",
   "scope": "/",
   "id": "/",
-  "theme_color": "#060d18",
-  "background_color": "#060d18",
+  "theme_color": "#fff8f0",
+  "background_color": "#fff8f0",
   "display": "standalone",
   "orientation": "portrait",
   "icons": [
     {
-      "src": "/brand/icon-512.png",
-      "sizes": "512x512",
-      "type": "image/png",
+      "src": "/icon-app.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
       "purpose": "any maskable"
     },
     {
-      "src": "/brand/icon-192.png",
-      "sizes": "192x192",
-      "type": "image/png",
-      "purpose": "any"
-    },
-    {
-      "src": "/brand/icon-128.png",
-      "sizes": "128x128",
-      "type": "image/png",
+      "src": "/brand/mascot.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
       "purpose": "any"
     }
-  ]
+  ],
+  "prefer_related_applications": false
 }

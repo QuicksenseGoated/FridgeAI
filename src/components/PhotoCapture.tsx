@@ -18,8 +18,8 @@ export function PhotoCapture({
   return (
     <section className="card">
       <div className="card__head">
-        <h2>Show us your fridge</h2>
-        <p>Open the door, good light, snap one clear photo.</p>
+        <h2>Snap your fridge</h2>
+        <p>One tap. One photo. Real meal ideas in seconds.</p>
       </div>
 
       {!preview ? (
@@ -39,34 +39,21 @@ export function PhotoCapture({
                 fill="none"
                 xmlns="http://www.w3.org/2000/svg"
               >
-                <rect
-                  x="6"
-                  y="10"
-                  width="36"
-                  height="28"
-                  rx="4"
-                  stroke="currentColor"
-                  strokeWidth="2"
-                />
-                <circle cx="18" cy="22" r="4" stroke="currentColor" strokeWidth="2" />
-                <path
-                  d="M6 32l9-9 7 7 6-6 14 14"
-                  stroke="currentColor"
-                  strokeWidth="2"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                />
-                <path
-                  d="M30 6v8M26 10h8"
-                  stroke="currentColor"
-                  strokeWidth="2"
-                  strokeLinecap="round"
-                />
+                <rect x="10" y="6" width="28" height="36" rx="6" fill="#FFFFFF" stroke="currentColor" strokeWidth="2.5"/>
+                <rect x="10" y="6" width="28" height="14" rx="6" fill="#D6EEFF"/>
+                <line x1="10" y1="20" x2="38" y2="20" stroke="currentColor" strokeWidth="2"/>
+                <rect x="30" y="10" width="4" height="8" rx="2" fill="#FFD166"/>
+                <rect x="30" y="26" width="4" height="12" rx="2" fill="#FFD166"/>
+                <circle cx="18" cy="32" r="3" fill="#FFFFFF" stroke="currentColor" strokeWidth="1.5"/>
+                <circle cx="28" cy="32" r="3" fill="#FFFFFF" stroke="currentColor" strokeWidth="1.5"/>
+                <circle cx="19" cy="32.5" r="1.2" fill="currentColor"/>
+                <circle cx="29" cy="32.5" r="1.2" fill="currentColor"/>
+                <path d="M20 35 Q23 37 26 35" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/>
               </svg>
             </div>
             <div className="dropzone__copy">
-              <strong>Tap to take or upload a photo</strong>
-              <span>JPG or PNG · fridge or pantry</span>
+              <strong>Tap here to take a photo!</strong>
+              <span>Fridge or pantry · JPG or PNG</span>
             </div>
           </div>
         </label>
@@ -92,12 +79,17 @@ export function PhotoCapture({
         onClick={onScan}
         disabled={loading || !hasFile}
       >
-        {loading ? "Scanning…" : "Generate meal ideas"}
+        {loading ? "Looking inside…" : "Get my meal ideas"}
       </button>
 
       {error && (
         <div className="alert alert--error" role="alert">
-          {error}
+          <p>{error}</p>
+          {error.includes("busy") && (
+            <button type="button" className="btn btn--ghost alert__retry" onClick={onScan}>
+              Try again
+            </button>
+          )}
         </div>
       )}
     </section>

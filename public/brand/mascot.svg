@@ -1,0 +1,48 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" fill="none" aria-hidden="true">
+  <!-- shadow -->
+  <ellipse cx="100" cy="182" rx="52" ry="10" fill="#4BA3F5" fill-opacity="0.18"/>
+
+  <!-- feet -->
+  <ellipse cx="72" cy="172" rx="14" ry="8" fill="#3D8FE0"/>
+  <ellipse cx="128" cy="172" rx="14" ry="8" fill="#3D8FE0"/>
+
+  <!-- body -->
+  <rect x="48" y="36" width="104" height="132" rx="22" fill="#FFFFFF" stroke="#4BA3F5" stroke-width="5"/>
+  <rect x="48" y="36" width="104" height="58" rx="22" fill="#D6EEFF"/>
+  <line x1="48" y1="94" x2="152" y2="94" stroke="#4BA3F5" stroke-width="4"/>
+
+  <!-- freezer handle -->
+  <rect x="132" y="52" width="10" height="28" rx="5" fill="#FFD166" stroke="#E8A830" stroke-width="2"/>
+
+  <!-- fridge handle -->
+  <rect x="132" y="108" width="10" height="42" rx="5" fill="#FFD166" stroke="#E8A830" stroke-width="2"/>
+
+  <!-- magnets -->
+  <circle cx="68" cy="56" r="10" fill="#FF8A9B"/>
+  <path d="M64 56 L72 56 M68 52 L68 60" stroke="#FFFFFF" stroke-width="2" stroke-linecap="round"/>
+  <rect x="88" y="48" width="18" height="14" rx="4" fill="#6BCB77" stroke="#4CAF60" stroke-width="2"/>
+  <path d="M91 55 L103 55" stroke="#FFFFFF" stroke-width="2" stroke-linecap="round"/>
+
+  <!-- food doodle on lower door -->
+  <circle cx="72" cy="128" r="9" fill="#FFD166" stroke="#E8A830" stroke-width="2"/>
+  <path d="M72 122 C74 126, 78 128, 72 134 C66 128, 70 126, 72 122" fill="#FF8A65"/>
+
+  <!-- face on lower door -->
+  <ellipse cx="82" cy="142" rx="9" ry="10" fill="#FFFFFF" stroke="#2D3748" stroke-width="2.5"/>
+  <ellipse cx="118" cy="142" rx="9" ry="10" fill="#FFFFFF" stroke="#2D3748" stroke-width="2.5"/>
+  <circle cx="85" cy="143" r="4" fill="#2D3748"/>
+  <circle cx="121" cy="143" r="4" fill="#2D3748"/>
+  <circle cx="86.5" cy="141.5" r="1.5" fill="#FFFFFF"/>
+  <circle cx="122.5" cy="141.5" r="1.5" fill="#FFFFFF"/>
+
+  <!-- blush -->
+  <ellipse cx="68" cy="152" rx="8" ry="5" fill="#FFB4C0" fill-opacity="0.55"/>
+  <ellipse cx="132" cy="152" rx="8" ry="5" fill="#FFB4C0" fill-opacity="0.55"/>
+
+  <!-- smile -->
+  <path d="M88 156 Q100 168 112 156" stroke="#2D3748" stroke-width="3" stroke-linecap="round" fill="none"/>
+
+  <!-- sparkle -->
+  <path d="M164 48 L166 54 L172 56 L166 58 L164 64 L162 58 L156 56 L162 54 Z" fill="#FFD166"/>
+  <path d="M36 88 L37.5 92 L42 93.5 L37.5 95 L36 99 L34.5 95 L30 93.5 L34.5 92 Z" fill="#6BCB77"/>
+</svg>

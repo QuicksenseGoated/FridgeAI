@@ -49,15 +49,72 @@ npm run dev
 - UI: http://localhost:5173
 - API: http://localhost:3002
 
-## Deploy (Render)
+## Deploy on Render
 
-1. Push to GitHub
-2. New **Web Service** → connect repo
-3. Build: `npm install && npm run build`
-4. Start: `npm start`
-5. Env vars: `NODE_ENV=production`, `APP_URL`, `GEMINI_API_KEY`, `YOUTUBE_API_KEY`
+FridgeAI ships as one **Web Service**: Express serves the API and the built React app from `dist/`.
 
-Or use `render.yaml` blueprint.
+### 1. Push to GitHub
+
+```powershell
+git add .
+git commit -m "Prepare for Render deploy"
+git push origin main
+```
+
+### 2. Create the service
+
+**Option A — Blueprint (easiest)**  
+1. [Render Dashboard](https://dashboard.render.com) → **New** → **Blueprint**  
+2. Connect your `FridgeAI` GitHub repo  
+3. Render reads `render.yaml` and creates the service  
+
+**Option B — Manual**  
+1. **New** → **Web Service** → connect repo  
+2. Settings:
+
+| Setting | Value |
+|---------|--------|
+| **Build Command** | `npm install --include=dev && npm run build` |
+| **Start Command** | `npm start` |
+| **Health Check Path** | `/api/health` |
+
+### 3. Environment variables
+
+Set these in Render → your service → **Environment**:
+
+| Variable | Required | Where to get it |
+|----------|----------|-----------------|
+| `NODE_ENV` | Yes | `production` (already in `render.yaml`) |
+| `GEMINI_API_KEY` | Yes | [Google AI Studio](https://aistudio.google.com/apikey) |
+| `YOUTUBE_API_KEY` | Yes | [Google Cloud Console](https://console.cloud.google.com) → YouTube Data API v3 → API key (`AIza...`) |
+| `APP_URL` | No | Your live URL, e.g. `https://fridgeai.onrender.com` — optional; Render sets `RENDER_EXTERNAL_URL` automatically |
+
+Do **not** commit `.env` to GitHub.
+
+### 4. Deploy
+
+Click **Deploy** (or push to `main` if auto-deploy is on). First build takes a few minutes.
+
+When it’s live, open your Render URL. Check:
+
+- App loads  
+- **Home** → scan works (needs `GEMINI_API_KEY`)  
+- Meal **Videos** tab works (needs `YOUTUBE_API_KEY`)  
+- **Groceries** → voice works (needs `GEMINI_API_KEY` + mic permission)
+
+### 5. Free tier notes
+
+- Service **spins down** after ~15 min idle — first visit after that may take 30–60s to wake up  
+- Upgrade to a paid plan for always-on hosting  
+
+### Troubleshooting
+
+| Problem | Fix |
+|---------|-----|
+| Build fails | Check Render build logs; run `npm run build` locally |
+| Scan fails | Add `GEMINI_API_KEY` in Environment, then **Manual Deploy** |
+| No videos | Add `YOUTUBE_API_KEY` (`AIza...`, not AI Studio `AQ...` key) |
+| 404 on refresh | Ensure `NODE_ENV=production` so Express serves `dist/index.html` |
 
 ## Scripts
 

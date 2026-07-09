@@ -3,7 +3,9 @@ import path from "node:path";
 import express from "express";
 import cors from "cors";
 import { scanFridgeHandler } from "./scanFridge.js";
+import { searchMealsHandler } from "./searchMeals.js";
 import { youtubeSearchHandler } from "./youtubeSearch.js";
+import { transcribeGroceryHandler } from "./transcribeGrocery.js";
 
 dotenv.config({ path: path.resolve(process.cwd(), ".env") });
 
@@ -37,13 +39,19 @@ const app = express();
 const PORT = Number(process.env.PORT) || 3002;
 const distDir = path.resolve(process.cwd(), "dist");
 const isProduction = process.env.NODE_ENV === "production";
+const appUrl =
+  process.env.APP_URL?.trim() ||
+  process.env.RENDER_EXTERNAL_URL?.trim() ||
+  undefined;
 
 app.use(
   cors({
     origin: isProduction
-      ? process.env.APP_URL ?? "http://localhost:5173"
+      ? appUrl
+        ? [appUrl]
+        : true
       : [
-          process.env.APP_URL ?? "http://localhost:5173",
+          appUrl ?? "http://localhost:5173",
           "http://localhost:5173",
           "http://localhost:5174",
           "http://localhost:5175",
@@ -63,7 +71,9 @@ app.get("/api/health", (_req, res) => {
 });
 
 app.post("/api/scan-fridge", scanFridgeHandler);
+app.post("/api/search-meals", searchMealsHandler);
 app.get("/api/youtube-search", youtubeSearchHandler);
+app.post("/api/transcribe-grocery", transcribeGroceryHandler);
 
 if (isProduction) {
   app.get("/sw.js", (_req, res) => {

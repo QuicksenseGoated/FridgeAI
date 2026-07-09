@@ -76,10 +76,10 @@ export function InstallApp() {
   if (isInAppBrowser()) {
     return (
       <div className="install-bar">
-        <p className="install-bar__title">Install Fridge AI</p>
+        <p className="install-bar__title">Add Fridge AI to your home screen!</p>
         <p className="install-bar__text">
           Open this link in <strong>Safari</strong> or <strong>Chrome</strong>{" "}
-          first. In-app browsers cannot install apps.
+          first — in-app browsers can&apos;t add apps.
         </p>
       </div>
     );
@@ -88,9 +88,9 @@ export function InstallApp() {
   if (installPrompt) {
     return (
       <div className="install-bar">
-        <p className="install-bar__title">Install Fridge AI</p>
+        <p className="install-bar__title">Add Fridge AI to your home screen!</p>
         <p className="install-bar__text">
-          Add it to your home screen for a full-screen app experience.
+          Tap below to keep your fridge helper handy on your phone.
         </p>
         <button
           type="button"
@@ -104,7 +104,7 @@ export function InstallApp() {
             setInstallPrompt(null);
           }}
         >
-          Install app
+          Add to home screen
         </button>
       </div>
     );
@@ -147,7 +147,7 @@ export function InstallApp() {
 
   return (
     <div className="install-bar">
-      <p className="install-bar__title">Install Fridge AI</p>
+      <p className="install-bar__title">Add Fridge AI to your home screen!</p>
       <p className="install-bar__text">
         Tap the browser menu <strong>⋮</strong>, then choose{" "}
         <strong>Install app</strong> or <strong>Add to Home screen</strong>.

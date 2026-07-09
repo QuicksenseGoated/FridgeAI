@@ -15,6 +15,8 @@ export interface YouTubeVideo {
   channelTitle: string;
   url: string;
   thumbnail: string;
+  duration?: string;
+  publishedAt?: string;
 }
 
 function getYouTubeKey(): string {
@@ -22,6 +24,58 @@ function getYouTubeKey(): string {
   const key = process.env.YOUTUBE_API_KEY?.trim() ?? "";
   if (!key.startsWith("AIza")) return "";
   return key;
+}
+
+function formatDuration(isoDuration: string | undefined): string | undefined {
+  if (!isoDuration) return undefined;
+
+  const match = isoDuration.match(/PT(?:(\d+)H)?(?:(\d+)M)?(?:(\d+)S)?/);
+  if (!match) return undefined;
+
+  const hours = Number(match[1] ?? 0);
+  const minutes = Number(match[2] ?? 0);
+  const seconds = Number(match[3] ?? 0);
+
+  if (hours > 0) {
+    return `${hours}:${String(minutes).padStart(2, "0")}:${String(seconds).padStart(2, "0")}`;
+  }
+
+  return `${minutes}:${String(seconds).padStart(2, "0")}`;
+}
+
+async function fetchVideoDetails(
+  apiKey: string,
+  videoIds: string[]
+): Promise<Map<string, { duration?: string; publishedAt?: string }>> {
+  if (videoIds.length === 0) return new Map();
+
+  const url = new URL("https://www.googleapis.com/youtube/v3/videos");
+  url.searchParams.set("part", "contentDetails,snippet");
+  url.searchParams.set("id", videoIds.join(","));
+  url.searchParams.set("key", apiKey);
+
+  const response = await fetch(url);
+  if (!response.ok) return new Map();
+
+  const data = (await response.json()) as {
+    items?: {
+      id?: string;
+      contentDetails?: { duration?: string };
+      snippet?: { publishedAt?: string };
+    }[];
+  };
+
+  const details = new Map<string, { duration?: string; publishedAt?: string }>();
+
+  for (const item of data.items ?? []) {
+    if (!item.id) continue;
+    details.set(item.id, {
+      duration: formatDuration(item.contentDetails?.duration),
+      publishedAt: item.snippet?.publishedAt,
+    });
+  }
+
+  return details;
 }
 
 export async function youtubeSearchHandler(req: Request, res: Response) {
@@ -60,12 +114,15 @@ export async function youtubeSearchHandler(req: Request, res: Response) {
         snippet?: {
           title?: string;
           channelTitle?: string;
-          thumbnails?: { medium?: { url?: string } };
+          thumbnails?: {
+            medium?: { url?: string };
+            high?: { url?: string };
+          };
         };
       }[];
     };
 
-    const videos: YouTubeVideo[] = (data.items ?? [])
+    const baseVideos = (data.items ?? [])
       .filter((item) => item.id?.videoId)
       .map((item) => {
         const videoId = item.id!.videoId!;
@@ -74,9 +131,26 @@ export async function youtubeSearchHandler(req: Request, res: Response) {
           title: item.snippet?.title ?? "Video",
           channelTitle: item.snippet?.channelTitle ?? "",
           url: `https://www.youtube.com/watch?v=${videoId}`,
-          thumbnail: item.snippet?.thumbnails?.medium?.url ?? "",
+          thumbnail:
+            item.snippet?.thumbnails?.high?.url ??
+            item.snippet?.thumbnails?.medium?.url ??
+            "",
         };
       });
+
+    const details = await fetchVideoDetails(
+      apiKey,
+      baseVideos.map((video) => video.videoId)
+    );
+
+    const videos: YouTubeVideo[] = baseVideos.map((video) => {
+      const meta = details.get(video.videoId);
+      return {
+        ...video,
+        duration: meta?.duration,
+        publishedAt: meta?.publishedAt,
+      };
+    });
 
     res.json({ query, videos });
   } catch (err) {

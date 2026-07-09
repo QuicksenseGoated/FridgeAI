@@ -2,7 +2,7 @@ interface StepBarProps {
   current: 1 | 2;
 }
 
-const STEPS = ["Photo", "Meals"];
+const STEPS = ["Photo", "Yummy meals"];
 
 export function StepBar({ current }: StepBarProps) {
   return (
