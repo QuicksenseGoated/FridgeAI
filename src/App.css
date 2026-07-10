@@ -5,6 +5,8 @@
   min-height: 100svh;
   min-height: 100dvh;
   width: 100%;
+  color-scheme: light only;
+  background-color: var(--bg);
   background:
     radial-gradient(circle at 10% 8%, rgba(255, 209, 102, 0.28) 0%, transparent 28%),
     radial-gradient(circle at 88% 12%, rgba(107, 203, 119, 0.18) 0%, transparent 26%),
