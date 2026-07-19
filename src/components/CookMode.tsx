@@ -2,11 +2,14 @@ import { useMemo, useState, type ReactNode } from "react";
 import { expandCookSteps } from "../services/expandCookSteps";
 import { getStepVisual } from "../services/cookStepVisuals";
 import { MealVideoReference } from "./MealVideoReference";
+import { MealPhoto } from "./MealPhoto";
+import type { MealImageSource } from "../services/mealImages";
 import type { HealthStatus, MealNutrition } from "../types/scan";
 
 export interface CookModeMeal {
   name: string;
   emoji?: string;
+  imageMeal?: MealImageSource;
   steps: string[];
   uses: string[];
   prepTime?: string;
@@ -25,7 +28,8 @@ interface CookModeProps {
 type Screen = "overview" | "cooking" | "done";
 
 export function CookMode({ meal, health, onClose, embedded = false }: CookModeProps) {
-  const { name, emoji = "🍳", uses, prepTime, cookTime, youtubeQuery } = meal;
+  const { name, emoji = "🍳", imageMeal, uses, prepTime, cookTime, youtubeQuery } = meal;
+  const photoMeal = imageMeal ?? { name };
   const steps = useMemo(() => expandCookSteps(meal.steps), [meal.steps]);
 
   const [screen, setScreen] = useState<Screen>("overview");
@@ -79,10 +83,9 @@ export function CookMode({ meal, health, onClose, embedded = false }: CookModePr
             </button>
           </header>
 
-          <div className="cookbook-recipe__hero">
-            <span className="cookbook-recipe__emoji" aria-hidden>
-              {emoji}
-            </span>
+          <MealPhoto meal={photoMeal} variant="hero" className="cook-mode__photo" />
+
+          <div className="cookbook-recipe__hero cookbook-recipe__hero--compact">
             <div>
               <h3 className="cookbook-recipe__title">{name}</h3>
               {totalTime && <p className="cookbook-recipe__time">{totalTime}</p>}
@@ -147,9 +150,7 @@ export function CookMode({ meal, health, onClose, embedded = false }: CookModePr
     return (
       <div className={rootClass} role="region" aria-label={`Cook mode complete: ${name}`}>
         <Paper className="cook-mode__paper--center">
-          <span className="cookbook-cover__emoji" aria-hidden>
-            {emoji}
-          </span>
+          <MealPhoto meal={photoMeal} variant="hero" className="cook-mode__photo cook-mode__photo--done" />
           <h3 className="cookbook-recipe__title">Bon appétit!</h3>
           <p className="cookbook-recipe__why">
             You finished <strong>{name}</strong>. Back to the recipe anytime.

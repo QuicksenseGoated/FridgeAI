@@ -1,0 +1,40 @@
+/* Theme G — Honey Parchment: warm amber, slightly square */
+
+[data-fridge-theme="g"] {
+  --skin-card: rgba(255, 248, 230, 0.88);
+  --skin-card-border: rgba(224, 122, 95, 0.35);
+  --skin-meal: rgba(255, 243, 220, 0.9);
+  --skin-meal-border: rgba(224, 122, 95, 0.3);
+  --skin-dropzone: rgba(255, 236, 200, 0.65);
+  --skin-dropzone-border: rgba(237, 137, 54, 0.45);
+  --skin-nav: rgba(255, 244, 228, 0.94);
+  --skin-nav-border: rgba(224, 122, 95, 0.2);
+  --skin-radius-lg: 14px;
+  --skin-radius-md: 12px;
+  --skin-radius-sm: 8px;
+  --skin-accent-bar: linear-gradient(180deg, #ffd166, #e07a5f);
+  --skin-card-shadow: 0 6px 18px rgba(224, 122, 95, 0.12);
+}
+
+[data-fridge-theme="g"] .app-atmosphere {
+  display: none;
+}
+
+[data-fridge-theme="g"] .app[data-active-tab="home"] {
+  background: linear-gradient(180deg, #fff3dc 0%, #fff8ee 100%);
+}
+
+[data-fridge-theme="g"] .app[data-active-tab="meals"] {
+  background: linear-gradient(180deg, #faf3ea 0%, #fff8f0 100%);
+}
+
+[data-fridge-theme="g"] .meal--tone-0,
+[data-fridge-theme="g"] .meal--tone-1,
+[data-fridge-theme="g"] .meal--tone-2,
+[data-fridge-theme="g"] .meal--tone-3,
+[data-fridge-theme="g"] .meal--tone-4,
+[data-fridge-theme="g"] .meal--tone-5 {
+  background: rgba(255, 243, 220, 0.9) !important;
+  transform: none !important;
+  clip-path: none !important;
+}

@@ -5,6 +5,20 @@ import type { HealthStatus } from "../../types/scan";
 import type { SavedMeal } from "../../types/app";
 import type { MealSuggestion } from "../../types/scan";
 
+const CATEGORY_CHIP_TONE: Record<MealCategory | "all", string> = {
+  all: "coral",
+  quick: "sun",
+  pasta: "tomato",
+  chicken: "amber",
+  asian: "jade",
+  veggie: "sage",
+  comfort: "rust",
+  seafood: "ocean",
+  breakfast: "honey",
+  baking: "wheat",
+  dessert: "berry",
+};
+
 const CATEGORY_CHIPS: { id: MealCategory | "all"; label: string }[] = [
   { id: "all", label: "All" },
   { id: "quick", label: "Quick" },
@@ -71,7 +85,7 @@ export function MealLibraryList({
             type="button"
             role="tab"
             aria-selected={category === chip.id}
-            className={`meals-categories__chip${category === chip.id ? " meals-categories__chip--active" : ""}`}
+            className={`meals-categories__chip meals-categories__chip--${CATEGORY_CHIP_TONE[chip.id]}${category === chip.id ? " meals-categories__chip--active" : ""}`}
             onClick={() => setCategory(chip.id)}
           >
             {chip.label}
@@ -95,6 +109,7 @@ export function MealLibraryList({
                 key={`${meal.id}-${expandedId === meal.id ? "on" : "off"}`}
                 mealData={{ meal, videos: [], videoError: undefined }}
                 index={index}
+                tone={index}
                 health={health}
                 savedMeals={savedMeals}
                 onToggleSave={onToggleSave}
@@ -102,7 +117,6 @@ export function MealLibraryList({
                 defaultExpanded={expandedId === meal.id}
                 onExpand={() => setExpandedId(meal.id)}
                 usesLabel="Ingredients"
-                badge={meal.emoji}
                 emoji={meal.emoji}
                 subtitle={book?.title}
                 onAddToGrocery={() => onAddToGrocery(meal.uses)}

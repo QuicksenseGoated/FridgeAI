@@ -4,6 +4,10 @@ import {
   type CatalogMeal,
   type CookbookId,
 } from "../data/mealCatalog";
+import {
+  filterCatalogByAllergies,
+} from "./allergyFilter";
+import type { AllergyId } from "../types/app";
 import type { MealSuggestion } from "../types/scan";
 
 function normalizeQuery(query: string) {
@@ -28,11 +32,18 @@ function matchesMeal(meal: CatalogMeal, query: string) {
   return words.every((word) => haystack.includes(word));
 }
 
-export function searchCatalogMeals(query: string, collection?: CookbookId | null): CatalogMeal[] {
+export function searchCatalogMeals(
+  query: string,
+  collection?: CookbookId | null,
+  avoidAllergies?: AllergyId[]
+): CatalogMeal[] {
   const q = normalizeQuery(query);
   const pool = collection ? mealsForCollection(MEAL_CATALOG, collection) : MEAL_CATALOG;
 
-  return pool.filter((meal) => matchesMeal(meal, q));
+  return filterCatalogByAllergies(
+    pool.filter((meal) => matchesMeal(meal, q)),
+    avoidAllergies
+  );
 }
 
 export function catalogMealToSuggestion(meal: CatalogMeal): MealSuggestion {

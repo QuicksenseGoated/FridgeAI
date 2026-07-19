@@ -1,6 +1,7 @@
 import type { CSSProperties, PointerEvent as ReactPointerEvent, ReactNode } from "react";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { CookMode } from "../CookMode";
+import { MealPhoto } from "../MealPhoto";
 import { isMealSaved } from "../../services/appStorage";
 import type { CatalogMeal, CookbookCollection } from "../../data/mealCatalog";
 import type { SavedMeal } from "../../types/app";
@@ -97,7 +98,9 @@ export function CookbookReader({
   const settleTimer = useRef<number | null>(null);
 
   useEffect(() => {
+    document.documentElement.classList.add("cookbook-reader-active");
     return () => {
+      document.documentElement.classList.remove("cookbook-reader-active");
       if (settleTimer.current) window.clearTimeout(settleTimer.current);
     };
   }, []);
@@ -277,9 +280,7 @@ export function CookbookReader({
                 >
                   <span className="cookbook-toc__num">{index + 1}</span>
                   <span className="cookbook-toc__name">
-                    <span className="cookbook-toc__emoji" aria-hidden>
-                      {recipe.emoji}
-                    </span>
+                    <MealPhoto meal={recipe} variant="toc" className="cookbook-toc__photo" />
                     {recipe.name}
                   </span>
                 </button>
@@ -303,10 +304,8 @@ export function CookbookReader({
           <span className="cookbook-recipe__chapter">{book.title}</span>
           <span className="cookbook-recipe__page-num">p. {absolutePage + 1}</span>
         </header>
-        <div className="cookbook-recipe__hero">
-          <span className="cookbook-recipe__emoji" aria-hidden>
-            {recipe.emoji}
-          </span>
+        <MealPhoto meal={recipe} variant="hero" className="cookbook-recipe__photo" />
+        <div className="cookbook-recipe__hero cookbook-recipe__hero--compact">
           <div>
             <h3 className="cookbook-recipe__title">{recipe.name}</h3>
             {totalTime && <p className="cookbook-recipe__time">{totalTime}</p>}
@@ -315,26 +314,28 @@ export function CookbookReader({
         <p className="cookbook-recipe__why">{recipe.why}</p>
 
         <div className="cookbook-recipe__body">
-          <section className="cookbook-recipe__block">
-            <h4 className="cookbook-recipe__section">Ingredients</h4>
-            <ul className="cookbook-recipe__ingredients">
-              {recipe.uses.map((item) => (
-                <li key={item}>{item}</li>
-              ))}
-            </ul>
-          </section>
+          <div className="cookbook-recipe__grid">
+            <section className="cookbook-recipe__col">
+              <h4 className="cookbook-recipe__section">Ingredients</h4>
+              <ul className="cookbook-recipe__ingredients">
+                {recipe.uses.map((item) => (
+                  <li key={item}>{item}</li>
+                ))}
+              </ul>
+            </section>
 
-          <section className="cookbook-recipe__block">
-            <h4 className="cookbook-recipe__section">Method</h4>
-            <ol className="cookbook-recipe__steps">
-              {recipe.steps.map((step, stepIndex) => (
-                <li key={`${recipe.id}-step-${stepIndex}`}>
-                  <span className="cookbook-recipe__step-num">{stepIndex + 1}</span>
-                  <span>{step}</span>
-                </li>
-              ))}
-            </ol>
-          </section>
+            <section className="cookbook-recipe__col">
+              <h4 className="cookbook-recipe__section">Method</h4>
+              <ol className="cookbook-recipe__steps">
+                {recipe.steps.map((step, stepIndex) => (
+                  <li key={`${recipe.id}-step-${stepIndex}`}>
+                    <span className="cookbook-recipe__step-num">{stepIndex + 1}</span>
+                    <span>{step}</span>
+                  </li>
+                ))}
+              </ol>
+            </section>
+          </div>
 
           <dl className="cookbook-recipe__nutrition">
             <div>
@@ -465,6 +466,7 @@ export function CookbookReader({
                 meal={{
                   name: cookMode.name,
                   emoji: cookMode.emoji,
+                  imageMeal: cookMode,
                   steps: cookMode.steps,
                   uses: cookMode.uses,
                   prepTime: cookMode.prepTime,

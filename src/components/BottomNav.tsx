@@ -131,6 +131,7 @@ export function BottomNav({
             key={tab.id}
             type="button"
             className={`bottom-nav__item${isActive ? " bottom-nav__item--active" : ""}`}
+            data-tab={tab.id}
             aria-current={isActive ? "page" : undefined}
             onClick={() => onChange(tab.id)}
           >

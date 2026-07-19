@@ -1,0 +1,44 @@
+/* Theme B — Frost Glass: cool transparency, icy highlights */
+
+[data-fridge-theme="b"] {
+  --skin-card: rgba(255, 255, 255, 0.68);
+  --skin-card-border: rgba(147, 197, 253, 0.35);
+  --skin-meal: rgba(255, 255, 255, 0.62);
+  --skin-meal-border: rgba(147, 197, 253, 0.28);
+  --skin-dropzone: rgba(239, 246, 255, 0.55);
+  --skin-dropzone-border: rgba(96, 165, 250, 0.45);
+  --skin-nav: rgba(239, 246, 255, 0.82);
+  --skin-nav-border: rgba(147, 197, 253, 0.35);
+  --skin-blur: 16px;
+  --skin-radius-lg: 18px;
+  --skin-radius-md: 14px;
+  --skin-radius-sm: 10px;
+  --skin-accent-bar: linear-gradient(180deg, #bae6fd, #60a5fa);
+  --skin-card-shadow: 0 10px 28px rgba(59, 130, 246, 0.1);
+  --skin-btn-shadow: 0 4px 0 #3b82f6;
+}
+
+[data-fridge-theme="b"] .app-atmosphere::after {
+  background: linear-gradient(
+    180deg,
+    rgba(186, 230, 253, 0.55) 0%,
+    rgba(239, 246, 255, 0.88) 45%,
+    rgba(255, 255, 255, 0.94) 100%
+  ) !important;
+}
+
+[data-fridge-theme="b"] .home-hero.panel-header.card,
+[data-fridge-theme="b"] .panel-header.card {
+  border-radius: 18px 18px 18px 6px;
+}
+
+[data-fridge-theme="b"] .meal--tone-0,
+[data-fridge-theme="b"] .meal--tone-1,
+[data-fridge-theme="b"] .meal--tone-2,
+[data-fridge-theme="b"] .meal--tone-3,
+[data-fridge-theme="b"] .meal--tone-4,
+[data-fridge-theme="b"] .meal--tone-5 {
+  background: rgba(255, 255, 255, 0.58) !important;
+  transform: none !important;
+  clip-path: none !important;
+}

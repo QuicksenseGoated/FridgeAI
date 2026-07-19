@@ -1,4 +1,5 @@
 import type { Request, Response } from "express";
+import { filterMealsByAllergies } from "./allergyFilter.js";
 
 export interface ScanRequestBody {
   imageBase64: string;
@@ -350,7 +351,11 @@ async function callGeminiVision(
           }
 
           console.log(`Fridge scan completed with model: ${model}`);
-          return parseScanResponse(text);
+          const parsed = parseScanResponse(text);
+          return {
+            ...parsed,
+            meals: filterMealsByAllergies(parsed.meals, avoidAllergies),
+          };
         } catch (err) {
           lastError = err instanceof Error ? err : new Error(String(err));
 

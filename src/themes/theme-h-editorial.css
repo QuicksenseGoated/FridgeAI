@@ -1,0 +1,38 @@
+/* Theme H — Lilac Dream: purple wash, soft glass */
+
+[data-fridge-theme="h"] {
+  --skin-card: rgba(250, 247, 255, 0.72);
+  --skin-card-border: rgba(183, 148, 246, 0.32);
+  --skin-meal: rgba(246, 240, 255, 0.75);
+  --skin-meal-border: rgba(183, 148, 246, 0.26);
+  --skin-dropzone: rgba(243, 232, 255, 0.65);
+  --skin-dropzone-border: rgba(183, 148, 246, 0.38);
+  --skin-nav: rgba(250, 247, 255, 0.86);
+  --skin-nav-border: rgba(183, 148, 246, 0.22);
+  --skin-blur: 12px;
+  --skin-radius-lg: 20px 8px 20px 8px;
+  --skin-accent-bar: linear-gradient(180deg, #d6bcfa, #b794f6);
+}
+
+[data-fridge-theme="h"] .app-atmosphere::after {
+  background: linear-gradient(
+    180deg,
+    rgba(183, 148, 246, 0.42) 0%,
+    rgba(250, 247, 255, 0.86) 42%,
+    rgba(255, 248, 240, 0.92) 100%
+  ) !important;
+}
+
+[data-fridge-theme="h"] .cookbook-library__title {
+  font-family: var(--font-serif);
+}
+
+[data-fridge-theme="h"] .meal--tone-0,
+[data-fridge-theme="h"] .meal--tone-1,
+[data-fridge-theme="h"] .meal--tone-2,
+[data-fridge-theme="h"] .meal--tone-3,
+[data-fridge-theme="h"] .meal--tone-4,
+[data-fridge-theme="h"] .meal--tone-5 {
+  background: rgba(246, 240, 255, 0.75) !important;
+  transform: none !important;
+}

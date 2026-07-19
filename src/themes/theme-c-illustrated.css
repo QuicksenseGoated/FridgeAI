@@ -1,0 +1,45 @@
+/* Theme C — Bold Contrast: solid cards, crisp radius, strong accents */
+
+[data-fridge-theme="c"] {
+  --skin-card: rgba(255, 255, 255, 0.98);
+  --skin-card-border: rgba(45, 55, 72, 0.14);
+  --skin-meal: #ffffff;
+  --skin-meal-border: rgba(45, 55, 72, 0.16);
+  --skin-dropzone: #ffffff;
+  --skin-dropzone-border: rgba(75, 163, 245, 0.55);
+  --skin-nav: #fff9f2;
+  --skin-nav-border: rgba(224, 122, 95, 0.25);
+  --skin-blur: 0px;
+  --skin-radius-lg: 12px;
+  --skin-radius-md: 10px;
+  --skin-radius-sm: 8px;
+  --skin-accent-bar: linear-gradient(180deg, var(--tab-accent), var(--tab-accent-dark));
+  --skin-card-shadow: 0 4px 14px rgba(45, 55, 72, 0.1);
+  --skin-btn-shadow: 0 4px 0 var(--tab-accent-dark);
+}
+
+[data-fridge-theme="c"] .app-atmosphere {
+  opacity: 0.45;
+}
+
+[data-fridge-theme="c"] .panel-header__accent {
+  width: 8px;
+}
+
+[data-fridge-theme="c"] .home-hero.panel-header.card {
+  border-radius: 12px;
+}
+
+[data-fridge-theme="c"] .meal.card {
+  box-shadow: 0 2px 8px rgba(45, 55, 72, 0.08);
+}
+
+[data-fridge-theme="c"] .meal--tone-0,
+[data-fridge-theme="c"] .meal--tone-1,
+[data-fridge-theme="c"] .meal--tone-2,
+[data-fridge-theme="c"] .meal--tone-3,
+[data-fridge-theme="c"] .meal--tone-4,
+[data-fridge-theme="c"] .meal--tone-5 {
+  background: #fff !important;
+  transform: none !important;
+}

@@ -5,12 +5,13 @@ import { ScanResults } from "../components/ScanResults";
 import { NoFoodRoast } from "../components/NoFoodRoast";
 import { RateUsBanner } from "../components/RateUsBanner";
 import { StepBar } from "../components/StepBar";
+import type { AllergyId, PersonaId, SavedMeal } from "../types/app";
 import type { HealthStatus, MealWithVideos, ScanResult } from "../types/scan";
-import type { PersonaId, SavedMeal } from "../types/app";
 
 interface HomeScreenProps {
   health: HealthStatus | null;
   persona: PersonaId;
+  avoidAllergies: AllergyId[];
   scanStreak: number;
   file: File | null;
   preview: string | null;
@@ -31,6 +32,7 @@ interface HomeScreenProps {
 
 export function HomeScreen({
   health,
+  avoidAllergies,
   scanStreak,
   file,
   preview,
@@ -89,6 +91,7 @@ export function HomeScreen({
             health={health}
             preview={preview}
             savedMeals={savedMeals}
+            avoidAllergies={avoidAllergies}
             onScanAgain={onScanAgain}
             onToggleSave={onToggleSave}
             onOpenGrocery={onOpenGrocery}

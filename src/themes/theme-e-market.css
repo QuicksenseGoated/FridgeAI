@@ -1,0 +1,35 @@
+/* Theme E — Sage Market: green wash, sage borders */
+
+[data-fridge-theme="e"] {
+  --skin-card: rgba(244, 255, 246, 0.9);
+  --skin-card-border: rgba(107, 203, 119, 0.4);
+  --skin-meal: rgba(238, 250, 242, 0.92);
+  --skin-meal-border: rgba(81, 178, 129, 0.35);
+  --skin-dropzone: rgba(228, 248, 232, 0.75);
+  --skin-dropzone-border: rgba(107, 203, 119, 0.5);
+  --skin-nav: rgba(244, 255, 246, 0.94);
+  --skin-nav-border: rgba(107, 203, 119, 0.35);
+  --skin-accent-bar: linear-gradient(180deg, #a8e6b0, #6bcb77);
+  --skin-radius-lg: 14px 20px 14px 20px;
+  --skin-radius-md: 10px 16px 10px 16px;
+}
+
+[data-fridge-theme="e"] .app-atmosphere[data-tab="grocery"]::after,
+[data-fridge-theme="e"] .app-atmosphere[data-tab="home"]::after {
+  background: linear-gradient(
+    180deg,
+    rgba(129, 178, 154, 0.5) 0%,
+    rgba(244, 255, 246, 0.9) 50%,
+    rgba(238, 250, 242, 0.95) 100%
+  ) !important;
+}
+
+[data-fridge-theme="e"] .meal--tone-0,
+[data-fridge-theme="e"] .meal--tone-1,
+[data-fridge-theme="e"] .meal--tone-2,
+[data-fridge-theme="e"] .meal--tone-3,
+[data-fridge-theme="e"] .meal--tone-4,
+[data-fridge-theme="e"] .meal--tone-5 {
+  background: rgba(238, 250, 242, 0.92) !important;
+  transform: none !important;
+}

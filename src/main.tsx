@@ -2,8 +2,13 @@ import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
 import './index.css'
 import App from './App.tsx'
+import ThemeComparisonScreen from './screens/ThemeComparisonScreen.tsx'
 
-if ('serviceWorker' in navigator) {
+const isThemeComparison =
+  new URLSearchParams(window.location.search).has('themes') ||
+  window.location.hash === '#themes'
+
+if ('serviceWorker' in navigator && !isThemeComparison) {
   window.addEventListener('load', () => {
     navigator.serviceWorker.register('/sw.js').catch(() => {
       // Ignore registration errors in unsupported contexts.
@@ -13,6 +18,6 @@ if ('serviceWorker' in navigator) {
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
-    <App />
+    {isThemeComparison ? <ThemeComparisonScreen /> : <App />}
   </StrictMode>,
 )

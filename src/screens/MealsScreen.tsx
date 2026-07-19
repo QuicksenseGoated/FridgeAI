@@ -3,25 +3,27 @@ import { CookbookReader } from "../components/cookbook/CookbookReader";
 import { CookbookShelf } from "../components/cookbook/CookbookShelf";
 import { MealLibraryList } from "../components/cookbook/MealLibraryList";
 import {
+  countByCollection,
+  COOKBOOK_COLLECTIONS,
   getCookbook,
-  getCookbookWithCounts,
   MEAL_CATALOG,
   mealsForCollection,
   type CookbookId,
 } from "../data/mealCatalog";
+import { filterCatalogByAllergies } from "../services/allergyFilter";
 import { searchMeals } from "../services/scanApi";
 import {
   findCatalogMeal,
   searchCatalogMeals,
 } from "../services/mealSearch";
-import type { SavedMeal } from "../types/app";
+import type { AllergyId, SavedMeal } from "../types/app";
 import type { HealthStatus, MealSuggestion } from "../types/scan";
 
 interface MealsScreenProps {
   health: HealthStatus | null;
   savedMeals: SavedMeal[];
   persona?: string;
-  avoidAllergies?: string[];
+  avoidAllergies?: AllergyId[];
   bookMode: boolean;
   onBookModeChange: (bookMode: boolean) => void;
   onToggleSave: (meal: MealSuggestion) => void;
@@ -79,7 +81,18 @@ export function MealsScreen({
   const [searching, setSearching] = useState(false);
   const [searchError, setSearchError] = useState<string | null>(null);
 
-  const cookbooks = useMemo(() => getCookbookWithCounts(), []);
+  const filteredCatalog = useMemo(
+    () => filterCatalogByAllergies(MEAL_CATALOG, avoidAllergies),
+    [avoidAllergies]
+  );
+  const cookbooks = useMemo(() => {
+    const counts = countByCollection(filteredCatalog);
+    return COOKBOOK_COLLECTIONS.map((book) => ({
+      ...book,
+      count: counts[book.id],
+    })).filter((book) => book.count > 0);
+  }, [filteredCatalog]);
+  const avoidsActive = Boolean(avoidAllergies?.length);
 
   const runAiSearch = useCallback(
     async (trimmed: string) => {
@@ -93,9 +106,12 @@ export function MealsScreen({
 
       try {
         const result = await searchMeals(trimmed, persona, avoidAllergies);
-        return result.meals
-          .map((meal) => findCatalogMeal(meal.name) ?? null)
-          .filter((meal): meal is NonNullable<typeof meal> => meal !== null);
+        return filterCatalogByAllergies(
+          result.meals
+            .map((meal) => findCatalogMeal(meal.name) ?? null)
+            .filter((meal): meal is NonNullable<typeof meal> => meal !== null),
+          avoidAllergies
+        );
       } catch (err) {
         setSearchError(err instanceof Error ? err.message : "Search failed");
         return [];
@@ -115,7 +131,7 @@ export function MealsScreen({
       return;
     }
 
-    let results = searchCatalogMeals(trimmed, null);
+    let results = searchCatalogMeals(trimmed, null, avoidAllergies);
     if (results.length < 2) {
       const aiMatches = await runAiSearch(trimmed);
       const catalog = results;
@@ -138,6 +154,14 @@ export function MealsScreen({
   };
 
   const openBook = (bookId: CookbookId, startAtId?: string) => {
+    const recipes = filterCatalogByAllergies(
+      mealsForCollection(MEAL_CATALOG, bookId),
+      avoidAllergies
+    );
+    if (recipes.length === 0) {
+      setSearchError("No recipes in this book match your avoids.");
+      return;
+    }
     setView({ mode: "book", bookId, startAtId });
     setQuery("");
     setSearchError(null);
@@ -163,7 +187,10 @@ export function MealsScreen({
 
   if (bookMode && view.mode === "book") {
     const book = getCookbook(view.bookId);
-    const recipes = mealsForCollection(MEAL_CATALOG, view.bookId);
+    const recipes = filterCatalogByAllergies(
+      mealsForCollection(MEAL_CATALOG, view.bookId),
+      avoidAllergies
+    );
     if (!book) {
       backToShelf();
       return null;
@@ -251,17 +278,22 @@ export function MealsScreen({
           </button>
         </div>
         {searchError && <p className="alert alert--warn meals-toolbar__error">{searchError}</p>}
+        {avoidsActive && (
+          <p className="meals-avoid-hint">
+            Skipping recipes with your avoids: {avoidAllergies!.join(", ")}
+          </p>
+        )}
       </section>
 
       {bookMode ? (
         <CookbookShelf
           books={cookbooks}
-          totalRecipes={MEAL_CATALOG.length}
+          totalRecipes={filteredCatalog.length}
           onOpen={(id) => openBook(id)}
         />
       ) : (
         <MealLibraryList
-          meals={MEAL_CATALOG}
+          meals={filteredCatalog}
           query={query}
           health={health}
           savedMeals={savedMeals}

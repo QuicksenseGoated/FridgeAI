@@ -5,6 +5,8 @@ import { ExpandableCard } from "../components/ExpandableCard";
 import { PageHeader } from "../components/PageHeader";
 import { GoalsScreen } from "./GoalsScreen";
 import { SettingsScreen } from "./SettingsScreen";
+import { formatAvoidSummary } from "../services/allergyFilter";
+import { ALLERGY_OPTIONS, PERSONAS } from "../types/app";
 import type {
   AllergyId,
   AppSettings,
@@ -13,7 +15,6 @@ import type {
   ScanHistoryEntry,
   UserProfile,
 } from "../types/app";
-import { ALLERGY_OPTIONS, PERSONAS } from "../types/app";
 import type { HealthStatus, MealSuggestion } from "../types/scan";
 
 interface YouScreenProps {
@@ -54,10 +55,7 @@ export function YouScreen({
   const [compareOpen, setCompareOpen] = useState(false);
   const [historyOpen, setHistoryOpen] = useState(false);
 
-  const allergySummary =
-    profile.avoidAllergies.length > 0
-      ? `${profile.avoidAllergies.length} avoided`
-      : "None set";
+  const allergySummary = formatAvoidSummary(profile.avoidAllergies);
 
   const toggleAllergy = (id: AllergyId) => {
     const has = profile.avoidAllergies.includes(id);

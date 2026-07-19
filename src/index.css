@@ -2,8 +2,14 @@
   color-scheme: light only;
   --bg: #fff8f0;
   --bg-accent: #e8f4fd;
-  --surface: #ffffff;
-  --surface-elevated: #ffffff;
+  --surface: #fff4e8;
+  --surface-elevated: #fff9f2;
+  --surface-cream: #fff4e8;
+  --surface-blush: #fff0f3;
+  --surface-sage: #eef8f0;
+  --surface-lilac: #f6f0ff;
+  --surface-sky: #eef6ff;
+  --surface-honey: #fff8e6;
   --text: #4a5568;
   --text-strong: #2d3748;
   --muted: #718096;
@@ -16,24 +22,53 @@
   --accent-yellow: #ffd166;
   --accent-mint: #6bcb77;
   --accent-pink: #ff8a9b;
+  --accent-lavender: #b794f6;
+  --accent-terracotta: #e07a5f;
+  --accent-sage: #81b29a;
   --danger: #e53e3e;
   --warn: #d69e2e;
   --shadow: 0 10px 32px rgba(75, 163, 245, 0.12);
   --shadow-soft: 0 4px 16px rgba(45, 55, 72, 0.06);
   --glow: 0 0 0 3px rgba(75, 163, 245, 0.18);
-  --radius: 24px;
-  --radius-sm: 16px;
+  --radius: clamp(18px, 5vw, 24px);
+  --radius-sm: clamp(12px, 3.5vw, 16px);
   --radius-pill: 999px;
   --font: "Fredoka", "Segoe UI", system-ui, sans-serif;
+  --font-display: "Fredoka", "Segoe UI", system-ui, sans-serif;
+  --font-serif: Georgia, "Times New Roman", serif;
+  /* Per-tab accent system */
+  --tab-accent: var(--primary);
+  --tab-accent-dark: var(--primary-dark);
+  --tab-accent-soft: var(--primary-soft);
+  --tab-home: #4ba3f5;
+  --tab-home-soft: rgba(75, 163, 245, 0.16);
+  --tab-grocery: #6bcb77;
+  --tab-grocery-soft: rgba(107, 203, 119, 0.18);
+  --tab-saved: #ff8a9b;
+  --tab-saved-soft: rgba(255, 138, 155, 0.18);
+  --tab-meals: #e07a5f;
+  --tab-meals-soft: rgba(224, 122, 95, 0.16);
+  --tab-you: #b794f6;
+  --tab-you-soft: rgba(183, 148, 246, 0.18);
   --safe-top: env(safe-area-inset-top, 0px);
   --safe-right: env(safe-area-inset-right, 0px);
   --safe-bottom: env(safe-area-inset-bottom, 0px);
   --safe-left: env(safe-area-inset-left, 0px);
   --device-width: 100%;
   --device-chrome: 0px;
-  --nav-height: 58px;
-  --app-bottom-space: calc(var(--nav-height) + var(--safe-bottom) + 10px);
-  --touch-min: 48px;
+  /* Fluid scale — adapts from small iPhone (~320px) to large Android (~430px+) */
+  --fluid-base: clamp(14px, 11px + 1.25vw, 17px);
+  --space-shell-x: clamp(10px, 2.8vw + 4px, 18px);
+  --space-shell-top: clamp(6px, 1vw + 4px, 12px);
+  --space-gap: clamp(10px, 2.5vw, 16px);
+  --nav-height: clamp(54px, 13vw + 12px, 64px);
+  --app-bottom-space: calc(var(--nav-height) + var(--safe-bottom) + clamp(6px, 1.5vw, 10px));
+  --touch-min: max(44px, clamp(44px, 11vw, 52px));
+  --header-icon: clamp(52px, 16vw, 76px);
+  --title-xl: clamp(1.55rem, 4.8vw + 0.5rem, 1.9rem);
+  --title-lg: clamp(1.25rem, 3.5vw + 0.4rem, 1.55rem);
+  --dropzone-icon: clamp(72px, 22vw, 100px);
+  --preview-max-h: clamp(140px, 34dvh, 240px);
 }
 
 *,
@@ -44,6 +79,7 @@
 
 html {
   color-scheme: light only;
+  font-size: var(--fluid-base);
   -webkit-text-size-adjust: 100%;
   height: 100%;
   height: -webkit-fill-available;
@@ -55,7 +91,7 @@ body {
   min-height: 100%;
   min-height: 100svh;
   min-height: 100dvh;
-  font: 16px/1.55 var(--font);
+  font: 1rem/1.55 var(--font);
   color: var(--text);
   color-scheme: light only;
   overflow-x: hidden;
@@ -80,6 +116,30 @@ body.device-preview {
   background-color: var(--bg);
 }
 
+/* Native mobile feel: scroll with touch, no visible scrollbars */
+html,
+body,
+#root,
+.device-stage,
+.device-frame,
+.app,
+.app * {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+html::-webkit-scrollbar,
+body::-webkit-scrollbar,
+#root::-webkit-scrollbar,
+.device-stage::-webkit-scrollbar,
+.device-frame::-webkit-scrollbar,
+.app::-webkit-scrollbar,
+.app *::-webkit-scrollbar {
+  display: none;
+  width: 0;
+  height: 0;
+}
+
 .device-stage {
   width: 100%;
   min-height: 100%;
@@ -93,11 +153,13 @@ body.device-preview {
 
 .device-frame {
   width: var(--device-width);
-  min-height: 100%;
-  min-height: 100svh;
-  min-height: 100dvh;
+  height: 100dvh;
+  max-height: 100dvh;
+  min-height: 0;
   margin: 0 auto;
   position: relative;
+  display: flex;
+  flex-direction: column;
   background: var(--bg);
   overflow: hidden;
   container-type: inline-size;
@@ -120,12 +182,15 @@ body.device-preview {
   }
 
   body.device-preview .device-frame {
-    --device-width: 412px;
+    --device-width: min(430px, calc(100vw - 32px));
     --device-chrome: 44px;
-    width: 412px;
+    width: min(430px, calc(100vw - 32px));
     max-width: calc(100vw - 32px);
-    height: min(896px, calc(100dvh - 72px));
+    height: min(calc(100dvh - 72px), calc(min(430px, 100vw - 32px) * 2.05));
+    max-height: min(calc(100dvh - 72px), calc(min(430px, 100vw - 32px) * 2.05));
     min-height: 0;
+    display: flex;
+    flex-direction: column;
     border-radius: 46px;
     border: 11px solid #101014;
     box-shadow:
@@ -204,7 +269,7 @@ body.device-preview {
   }
 
   body.device-preview .device-frame .app {
-    height: calc(100% - var(--device-chrome));
+    flex: 1;
     min-height: 0;
   }
 }
@@ -254,7 +319,6 @@ a {
   .card,
   .bottom-nav,
   .dropzone,
-  .install-bar,
   .onboarding__card,
   .empty-state,
   .grocery-item,

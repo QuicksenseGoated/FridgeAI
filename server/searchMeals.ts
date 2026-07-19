@@ -1,4 +1,5 @@
 import type { Request, Response } from "express";
+import { filterMealsByAllergies } from "./allergyFilter.js";
 
 interface MealNutrition {
   calories: string;
@@ -185,9 +186,12 @@ export async function searchMealsHandler(req: Request, res: Response) {
         const cleaned = text.replace(/```json\n?|\n?```/g, "").trim();
         const parsed = JSON.parse(cleaned) as { meals?: Partial<MealSuggestion>[] };
 
-        const meals = (parsed.meals ?? [])
-          .map((meal) => normalizeMeal(meal))
-          .filter((meal): meal is MealSuggestion => meal !== null);
+        const meals = filterMealsByAllergies(
+          (parsed.meals ?? [])
+            .map((meal) => normalizeMeal(meal))
+            .filter((meal): meal is MealSuggestion => meal !== null),
+          avoidAllergies
+        );
 
         res.json({ meals, usedAI: true });
         return;

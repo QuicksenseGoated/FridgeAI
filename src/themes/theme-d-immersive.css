@@ -1,0 +1,87 @@
+/* Theme D — Dark Glow: tinted dark glass, glowing tab colors */
+
+[data-fridge-theme="d"] {
+  --skin-card: rgba(22, 22, 32, 0.72);
+  --skin-card-border: rgba(255, 255, 255, 0.12);
+  --skin-meal: rgba(28, 28, 40, 0.78);
+  --skin-meal-border: rgba(255, 255, 255, 0.1);
+  --skin-dropzone: rgba(32, 32, 48, 0.65);
+  --skin-dropzone-border: rgba(167, 139, 250, 0.4);
+  --skin-nav: rgba(16, 16, 24, 0.88);
+  --skin-nav-border: rgba(255, 255, 255, 0.08);
+  --skin-blur: 18px;
+  --skin-radius-lg: 16px;
+  --skin-radius-md: 12px;
+  --skin-accent-bar: linear-gradient(180deg, #c4b5fd, #8b5cf6);
+  --skin-card-shadow: 0 12px 32px rgba(0, 0, 0, 0.35);
+  --skin-btn-shadow: none;
+  --skin-chip: rgba(255, 255, 255, 0.1);
+  --skin-chip-border: rgba(255, 255, 255, 0.14);
+  --skin-step: rgba(255, 255, 255, 0.08);
+}
+
+[data-fridge-theme="d"] .app {
+  color: #eef0f8;
+}
+
+[data-fridge-theme="d"] .app-atmosphere {
+  filter: blur(20px) saturate(1.2);
+  transform: scale(1.1);
+}
+
+[data-fridge-theme="d"] .app-atmosphere::after {
+  background: rgba(10, 10, 18, 0.62) !important;
+}
+
+[data-fridge-theme="d"] .app[data-active-tab="home"] {
+  background: radial-gradient(circle at 20% 10%, rgba(167, 139, 250, 0.35) 0%, transparent 42%), #0f0f16;
+}
+
+[data-fridge-theme="d"] .header__name,
+[data-fridge-theme="d"] .page-header__title,
+[data-fridge-theme="d"] .cookbook-library__title,
+[data-fridge-theme="d"] .meal h3,
+[data-fridge-theme="d"] .card__head h2 {
+  color: #f2f2f8;
+}
+
+[data-fridge-theme="d"] .header__sub,
+[data-fridge-theme="d"] .header__tagline,
+[data-fridge-theme="d"] .page-header__subtitle,
+[data-fridge-theme="d"] .meal__time,
+[data-fridge-theme="d"] .card__head p {
+  color: rgba(238, 240, 248, 0.65);
+}
+
+[data-fridge-theme="d"] .bottom-nav__item {
+  color: rgba(238, 240, 248, 0.5);
+}
+
+[data-fridge-theme="d"] .bottom-nav__item--active {
+  color: var(--tab-accent);
+}
+
+[data-fridge-theme="d"] .btn--primary {
+  background: var(--tab-accent) !important;
+  border-color: transparent !important;
+}
+
+[data-fridge-theme="d"] .meal--tone-0,
+[data-fridge-theme="d"] .meal--tone-1,
+[data-fridge-theme="d"] .meal--tone-2,
+[data-fridge-theme="d"] .meal--tone-3,
+[data-fridge-theme="d"] .meal--tone-4,
+[data-fridge-theme="d"] .meal--tone-5 {
+  background: rgba(28, 28, 40, 0.78) !important;
+  transform: none !important;
+}
+
+[data-fridge-theme="d"] .theme-preview__frame .device-frame__chrome {
+  background: #12121c;
+}
+
+[data-fridge-theme="d"] .theme-preview__frame .device-frame__time,
+[data-fridge-theme="d"] .theme-preview__frame .device-frame__signal span {
+  color: #eef0f8;
+  background: #eef0f8;
+}

@@ -3,7 +3,9 @@ import { shareMeal } from "../services/shareMeal";
 import type { HealthStatus, MealSuggestion, MealTab, MealWithVideos } from "../types/scan";
 import type { SavedMeal } from "../types/app";
 import { isMealSaved } from "../services/appStorage";
+import { findCatalogMeal } from "../services/mealSearch";
 import { CookMode } from "./CookMode";
+import { MealPhoto } from "./MealPhoto";
 import { MealVideoPanel } from "./MealVideoPanel";
 
 const TABS: { id: MealTab; label: string }[] = [
@@ -26,14 +28,14 @@ interface MealCardProps {
   usesLabel?: string;
   onAddToGrocery?: () => void;
   onExpand?: () => void;
-  badge?: string;
   subtitle?: string;
   emoji?: string;
+  tone?: number;
 }
 
 export function MealCard({
   mealData,
-  index,
+  index: _index,
   health,
   savedMeals,
   onToggleSave,
@@ -44,12 +46,14 @@ export function MealCard({
   usesLabel = "Uses from your fridge",
   onAddToGrocery,
   onExpand,
-  badge,
   subtitle,
   emoji,
+  tone,
 }: MealCardProps) {
   const { meal, videos, videoError } = mealData;
   const saved = isMealSaved(meal.name, savedMeals);
+  const catalogMeal = findCatalogMeal(meal.name);
+  const imageMeal = catalogMeal ?? { name: meal.name };
   const [expanded, setExpanded] = useState(defaultExpanded);
   const [activeTab, setActiveTab] = useState<MealTab>(
     videos.length > 0 ? "videos" : "overview"
@@ -91,7 +95,7 @@ export function MealCard({
   return (
     <>
       <article
-        className={`meal card${isPick && !isCollapsed ? " meal--pick" : ""}${accordion ? " meal--accordion" : ""}${isCollapsed ? " meal--collapsed" : ""}`}
+        className={`meal card${tone !== undefined ? ` meal--tone-${tone % 6}` : ""}${isPick && !isCollapsed ? " meal--pick" : ""}${accordion ? " meal--accordion" : ""}${isCollapsed ? " meal--collapsed" : ""}`}
       >
         <div
           className="meal__top"
@@ -110,7 +114,7 @@ export function MealCard({
               : undefined
           }
         >
-          <span className="meal__index">{badge ?? index + 1}</span>
+          <MealPhoto meal={imageMeal} variant="thumb" className="meal__photo" />
           <div className="meal__title-wrap">
             <h3>{meal.name}</h3>
             {subtitle && <p className="meal__subtitle">{subtitle}</p>}
@@ -161,6 +165,8 @@ export function MealCard({
         {!isCollapsed && (
           <>
             {isPick && <p className="meal__pick-badge">Tonight&apos;s pick</p>}
+
+            <MealPhoto meal={imageMeal} variant="banner" className="meal__banner" />
 
             <div className="meal-tabs" role="tablist" aria-label={`${meal.name} details`}>
               {TABS.map((tab) => (
@@ -294,6 +300,7 @@ export function MealCard({
           meal={{
             name: meal.name,
             emoji,
+            imageMeal,
             steps: meal.steps,
             uses: meal.uses,
             prepTime: meal.prepTime,

@@ -1,0 +1,79 @@
+/* Theme A — Kitchen Worlds: distinct full-viewport place per tab */
+
+[data-fridge-theme="a"] {
+  --skin-card: rgba(255, 249, 242, 0.92);
+  --skin-radius-lg: 22px 8px 22px 8px;
+  --skin-accent-bar: linear-gradient(180deg, #ffd166, var(--tab-accent));
+}
+
+[data-fridge-theme="a"] .app-atmosphere {
+  transform: scale(1.04);
+}
+
+[data-fridge-theme="a"] .app-atmosphere[data-tab="home"]::after {
+  background: linear-gradient(
+    180deg,
+    rgba(255, 209, 102, 0.55) 0%,
+    rgba(255, 248, 240, 0.82) 35%,
+    rgba(240, 248, 255, 0.92) 100%
+  );
+}
+
+[data-fridge-theme="a"] .app-atmosphere[data-tab="grocery"]::after {
+  background: linear-gradient(
+    180deg,
+    rgba(129, 178, 154, 0.58) 0%,
+    rgba(244, 255, 246, 0.86) 40%,
+    rgba(238, 250, 242, 0.94) 100%
+  );
+}
+
+[data-fridge-theme="a"] .app-atmosphere[data-tab="saved"]::after {
+  background: linear-gradient(
+    180deg,
+    rgba(255, 180, 190, 0.52) 0%,
+    rgba(255, 245, 246, 0.88) 38%,
+    rgba(255, 248, 240, 0.94) 100%
+  );
+}
+
+[data-fridge-theme="a"] .app-atmosphere[data-tab="meals"]::after {
+  background: linear-gradient(
+    180deg,
+    rgba(224, 122, 95, 0.48) 0%,
+    rgba(255, 249, 244, 0.86) 36%,
+    rgba(250, 243, 234, 0.94) 100%
+  );
+}
+
+[data-fridge-theme="a"] .app-atmosphere[data-tab="you"]::after {
+  background: linear-gradient(
+    180deg,
+    rgba(183, 148, 246, 0.5) 0%,
+    rgba(250, 247, 255, 0.88) 38%,
+    rgba(255, 248, 240, 0.94) 100%
+  );
+}
+
+[data-fridge-theme="a"] .panel-header.card,
+[data-fridge-theme="a"] .card,
+[data-fridge-theme="a"] .meal-card {
+  backdrop-filter: blur(10px);
+}
+
+[data-fridge-theme="a"] .app[data-active-tab="grocery"] .panel-header__accent {
+  background: linear-gradient(180deg, #c8f0d0, #6bcb77);
+}
+
+[data-fridge-theme="a"] .app[data-active-tab="saved"] .panel-header__accent {
+  background: linear-gradient(180deg, #ffc8d0, #ff8a9b);
+}
+
+[data-fridge-theme="a"] .cookbook-library__title {
+  font-family: var(--font-serif);
+}
+
+[data-fridge-theme="a"] .bottom-nav {
+  background: rgba(255, 244, 232, 0.92);
+  backdrop-filter: blur(14px);
+}

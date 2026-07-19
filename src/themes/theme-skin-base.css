@@ -1,0 +1,54 @@
+/* Shared skin hooks — same layout, CSS variables per data-fridge-theme */
+
+[data-fridge-theme] .card,
+[data-fridge-theme] .home-hero.panel-header.card,
+[data-fridge-theme] .panel-header.card {
+  background: var(--skin-card, rgba(255, 249, 242, 0.92));
+  border-color: var(--skin-card-border, rgba(75, 163, 245, 0.22));
+  border-radius: var(--skin-radius-lg, clamp(16px, 5vw, 22px));
+  box-shadow: var(--skin-card-shadow, 0 8px 24px rgba(45, 36, 28, 0.08));
+  backdrop-filter: blur(var(--skin-blur, 10px));
+}
+
+[data-fridge-theme] .meal.card {
+  background: var(--skin-meal, var(--skin-card, rgba(255, 249, 242, 0.92)));
+  border-color: var(--skin-meal-border, var(--skin-card-border));
+  border-radius: var(--skin-radius-md, clamp(14px, 4vw, 18px));
+}
+
+[data-fridge-theme] .dropzone {
+  border-radius: var(--skin-radius-md, clamp(14px, 4vw, 18px));
+  background: var(--skin-dropzone, rgba(255, 255, 255, 0.55));
+  border-color: var(--skin-dropzone-border, rgba(75, 163, 245, 0.35));
+}
+
+[data-fridge-theme] .bottom-nav {
+  background: var(--skin-nav, rgba(255, 244, 232, 0.96));
+  border-top-color: var(--skin-nav-border, rgba(45, 55, 72, 0.08));
+  backdrop-filter: blur(var(--skin-blur, 12px));
+}
+
+[data-fridge-theme] .panel-header__accent {
+  background: var(--skin-accent-bar, linear-gradient(180deg, #ffd166, var(--tab-accent)));
+}
+
+[data-fridge-theme] .steps__item {
+  border-radius: var(--skin-radius-sm, 12px);
+  background: var(--skin-step, rgba(255, 255, 255, 0.65));
+}
+
+[data-fridge-theme] .steps__item--active {
+  background: var(--skin-step-active, var(--tab-accent-soft));
+  border-color: var(--skin-step-active-border, var(--tab-accent));
+}
+
+[data-fridge-theme] .chip {
+  border-radius: var(--skin-radius-pill, 999px);
+  background: var(--skin-chip, rgba(255, 255, 255, 0.7));
+  border-color: var(--skin-chip-border, rgba(139, 119, 96, 0.22));
+}
+
+[data-fridge-theme] .btn--primary {
+  border-radius: var(--skin-btn-radius, clamp(14px, 4vw, 18px));
+  box-shadow: var(--skin-btn-shadow, 0 5px 0 var(--tab-accent-dark, var(--primary-dark)));
+}

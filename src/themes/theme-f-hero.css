@@ -1,0 +1,43 @@
+/* Theme F — Blush Mist: rose tint, extra round */
+
+[data-fridge-theme="f"] {
+  --skin-card: rgba(255, 245, 246, 0.78);
+  --skin-card-border: rgba(255, 138, 155, 0.32);
+  --skin-meal: rgba(255, 240, 243, 0.82);
+  --skin-meal-border: rgba(255, 138, 155, 0.28);
+  --skin-dropzone: rgba(255, 232, 238, 0.7);
+  --skin-dropzone-border: rgba(255, 138, 155, 0.4);
+  --skin-nav: rgba(255, 245, 246, 0.88);
+  --skin-nav-border: rgba(255, 138, 155, 0.22);
+  --skin-blur: 14px;
+  --skin-radius-lg: 24px;
+  --skin-radius-md: 20px;
+  --skin-radius-sm: 16px;
+  --skin-radius-pill: 999px;
+  --skin-accent-bar: linear-gradient(180deg, #ffb3be, #ff8a9b);
+  --skin-btn-radius: 999px;
+}
+
+[data-fridge-theme="f"] .app-atmosphere::after {
+  background: linear-gradient(
+    180deg,
+    rgba(255, 180, 190, 0.45) 0%,
+    rgba(255, 245, 246, 0.85) 45%,
+    rgba(255, 248, 240, 0.92) 100%
+  ) !important;
+}
+
+[data-fridge-theme="f"] .home-hero.panel-header.card {
+  border-radius: 28px;
+}
+
+[data-fridge-theme="f"] .meal--tone-0,
+[data-fridge-theme="f"] .meal--tone-1,
+[data-fridge-theme="f"] .meal--tone-2,
+[data-fridge-theme="f"] .meal--tone-3,
+[data-fridge-theme="f"] .meal--tone-4,
+[data-fridge-theme="f"] .meal--tone-5 {
+  background: rgba(255, 240, 243, 0.82) !important;
+  border-radius: 20px !important;
+  transform: none !important;
+}

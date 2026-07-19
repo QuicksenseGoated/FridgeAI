@@ -1,8 +1,8 @@
 import { useCallback, useEffect, useState } from "react";
 import { BottomNav } from "./components/BottomNav";
-import { InstallApp } from "./components/InstallApp";
 import { Onboarding } from "./components/Onboarding";
 import { Toast } from "./components/Toast";
+import { filterScanResult } from "./services/allergyFilter";
 import {
   addGroceryItems,
   addHistoryEntry,
@@ -195,7 +195,11 @@ export default function App() {
     }
 
     if (health?.ai !== "ready") {
-      setError("Add GEMINI_API_KEY to .env and restart npm run dev.");
+      setError(
+        health?.ai === "none"
+          ? "Photo scanning is unavailable — the server is missing GEMINI_API_KEY."
+          : "Photo scanning is not ready yet. Try again in a moment.",
+      );
       return;
     }
 
@@ -207,11 +211,14 @@ export default function App() {
     try {
       const { base64, mimeType } = await fileToBase64(file);
       setLoadingPhase("meals");
-      const scan = await scanFridge(
-        base64,
-        mimeType,
-        persona,
-        profile.avoidAllergies.length > 0 ? profile.avoidAllergies : undefined
+      const scan = filterScanResult(
+        await scanFridge(
+          base64,
+          mimeType,
+          persona,
+          profile.avoidAllergies.length > 0 ? profile.avoidAllergies : undefined
+        ),
+        profile.avoidAllergies
       );
       setResult(scan);
 
@@ -307,7 +314,6 @@ export default function App() {
 
   const handleTabChange = (tab: TabId) => {
     setActiveTab(tab);
-    window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
   const openHome = () => setActiveTab("home");
@@ -329,89 +335,105 @@ export default function App() {
         <div className="app">
           <div className="app__viewport">
             <div className="shell">
-          <InstallApp />
+              <div className="tab-panels">
+                <div
+                  className={`tab-panel tab-panel--home${activeTab === "home" ? " tab-panel--active" : ""}`}
+                  aria-hidden={activeTab !== "home"}
+                >
+                  <HomeScreen
+                    health={health}
+                    persona={persona}
+                    avoidAllergies={profile.avoidAllergies}
+                    scanStreak={profile.scanStreak}
+                    file={file}
+                    preview={preview}
+                    loadingPhase={loadingPhase}
+                    error={error}
+                    result={result}
+                    mealVideos={mealVideos}
+                    savedMeals={savedMeals}
+                    onFile={handleFile}
+                    onScan={handleScan}
+                    onScanAgain={handleScanAgain}
+                    onPersonaSelect={handlePersonaSelect}
+                    onToggleSave={handleToggleSave}
+                    onOpenGrocery={openGrocery}
+                    onShare={(shared) =>
+                      setToast(shared ? "Meal shared!" : "Could not share meal")
+                    }
+                    onStarRated={(stars, openedStore) => {
+                      setToast(
+                        openedStore
+                          ? `Thanks for ${stars} stars! Opening the store to leave your review.`
+                          : `Thanks for ${stars} stars! Store link will work once we launch.`,
+                      );
+                    }}
+                  />
+                </div>
 
-          {activeTab === "home" && (
-            <HomeScreen
-              health={health}
-              persona={persona}
-              scanStreak={profile.scanStreak}
-              file={file}
-              preview={preview}
-              loadingPhase={loadingPhase}
-              error={error}
-              result={result}
-              mealVideos={mealVideos}
-              savedMeals={savedMeals}
-              onFile={handleFile}
-              onScan={handleScan}
-              onScanAgain={handleScanAgain}
-              onPersonaSelect={handlePersonaSelect}
-              onToggleSave={handleToggleSave}
-              onOpenGrocery={openGrocery}
-              onShare={(shared) =>
-                setToast(shared ? "Meal shared!" : "Could not share meal")
-              }
-              onStarRated={(stars, openedStore) => {
-                setToast(
-                  openedStore
-                    ? `Thanks for ${stars} stars! Opening the store to leave your review.`
-                    : `Thanks for ${stars} stars! Store link will work once we launch.`,
-                );
-              }}
-            />
-          )}
+                <div
+                  className={`tab-panel tab-panel--grocery${activeTab === "grocery" ? " tab-panel--active" : ""}`}
+                  aria-hidden={activeTab !== "grocery"}
+                >
+                  <GroceryScreen
+                    items={groceryItems}
+                    onAddItems={handleAddGrocery}
+                    onToggleItem={handleToggleGrocery}
+                    onRenameItem={handleRenameGrocery}
+                    onRemoveItem={handleRemoveGrocery}
+                    onClearChecked={handleClearCheckedGrocery}
+                  />
+                </div>
 
-          {activeTab === "grocery" && (
-            <GroceryScreen
-              items={groceryItems}
-              onAddItems={handleAddGrocery}
-              onToggleItem={handleToggleGrocery}
-              onRenameItem={handleRenameGrocery}
-              onRemoveItem={handleRemoveGrocery}
-              onClearChecked={handleClearCheckedGrocery}
-            />
-          )}
+                <div
+                  className={`tab-panel tab-panel--saved${activeTab === "saved" ? " tab-panel--active" : ""}`}
+                  aria-hidden={activeTab !== "saved"}
+                >
+                  <SavedScreen
+                    savedMeals={savedMeals}
+                    onRemoveMeal={handleRemoveSaved}
+                    onStartScan={openHome}
+                  />
+                </div>
 
-          {activeTab === "saved" && (
-            <SavedScreen
-              savedMeals={savedMeals}
-              onRemoveMeal={handleRemoveSaved}
-              onStartScan={openHome}
-            />
-          )}
+                <div
+                  className={`tab-panel tab-panel--meals${activeTab === "meals" ? " tab-panel--active" : ""}`}
+                  aria-hidden={activeTab !== "meals"}
+                >
+                  <MealsScreen
+                    health={health}
+                    savedMeals={savedMeals}
+                    persona={persona}
+                    avoidAllergies={profile.avoidAllergies}
+                    bookMode={settings.bookMode ?? true}
+                    onBookModeChange={(bookMode) =>
+                      setSettings((current) => ({ ...current, bookMode }))
+                    }
+                    onToggleSave={handleToggleSave}
+                    onAddToGrocery={(names) => handleAddGrocery(names)}
+                    onOpenGrocery={openGrocery}
+                  />
+                </div>
 
-          {activeTab === "meals" && (
-            <MealsScreen
-              health={health}
-              savedMeals={savedMeals}
-              persona={persona}
-              avoidAllergies={profile.avoidAllergies}
-              bookMode={settings.bookMode ?? true}
-              onBookModeChange={(bookMode) =>
-                setSettings((current) => ({ ...current, bookMode }))
-              }
-              onToggleSave={handleToggleSave}
-              onAddToGrocery={(names) => handleAddGrocery(names)}
-              onOpenGrocery={openGrocery}
-            />
-          )}
-
-          {activeTab === "you" && (
-            <YouScreen
-              profile={profile}
-              persona={persona}
-              history={history}
-              savedMeals={savedMeals}
-              settings={settings}
-              health={health}
-              onProfileChange={setProfile}
-              onPersonaSelect={handlePersonaSelect}
-              onSettingsChange={setSettings}
-              onToggleSave={handleToggleSave}
-              onClearHistory={handleClearHistory}
-            />
-          )}
+                <div
+                  className={`tab-panel tab-panel--you${activeTab === "you" ? " tab-panel--active" : ""}`}
+                  aria-hidden={activeTab !== "you"}
+                >
+                  <YouScreen
+                    profile={profile}
+                    persona={persona}
+                    history={history}
+                    savedMeals={savedMeals}
+                    settings={settings}
+                    health={health}
+                    onProfileChange={setProfile}
+                    onPersonaSelect={handlePersonaSelect}
+                    onSettingsChange={setSettings}
+                    onToggleSave={handleToggleSave}
+                    onClearHistory={handleClearHistory}
+                  />
+                </div>
+              </div>
             </div>
           </div>
 
@@ -434,7 +456,7 @@ export default function App() {
         </div>
       </div>
       <p className="device-stage__label" aria-hidden>
-        Mobile preview · 412px
+        Mobile preview
       </p>
     </div>
   );

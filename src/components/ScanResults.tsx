@@ -1,5 +1,5 @@
+import type { AllergyId, SavedMeal } from "../types/app";
 import type { HealthStatus, MealSuggestion, MealWithVideos, ScanResult } from "../types/scan";
-import type { SavedMeal } from "../types/app";
 import { MealCard } from "./MealCard";
 
 interface ScanResultsProps {
@@ -8,6 +8,7 @@ interface ScanResultsProps {
   health: HealthStatus | null;
   preview: string | null;
   savedMeals: SavedMeal[];
+  avoidAllergies: AllergyId[];
   onScanAgain: () => void;
   onToggleSave: (meal: MealSuggestion) => void;
   onOpenGrocery: () => void;
@@ -20,21 +21,37 @@ export function ScanResults({
   health,
   preview,
   savedMeals,
+  avoidAllergies,
   onScanAgain,
   onToggleSave,
   onOpenGrocery,
   onShare,
 }: ScanResultsProps) {
   const shoppingList = result.shoppingList ?? [];
+  const avoidsActive = avoidAllergies.length > 0;
 
   return (
     <section className="results">
+      {avoidsActive && (
+        <p className="diet-banner card">
+          Avoiding {avoidAllergies.join(", ")} — hidden from meal ideas below.
+        </p>
+      )}
+
       <div className="results__celebration card">
         <p className="results__celebration-emoji" aria-hidden>
           🎉
         </p>
-        <h2>{result.meals.length} meals ready to cook!</h2>
-        <p>Tap a meal to expand it. Heart the ones you love.</p>
+        <h2>
+          {result.meals.length > 0
+            ? `${result.meals.length} meals ready to cook!`
+            : "No meals matched your avoids"}
+        </h2>
+        <p>
+          {result.meals.length > 0
+            ? "Tap a meal to expand it. Heart the ones you love."
+            : "Try turning off an avoid in Settings, or scan again with different ingredients."}
+        </p>
         {preview && (
           <img src={preview} alt="" className="results__celebration-thumb" aria-hidden />
         )}
