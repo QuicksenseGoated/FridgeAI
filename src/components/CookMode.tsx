@@ -1,4 +1,4 @@
-import { useMemo, useState, type ReactNode } from "react";
+import { useEffect, useMemo, useRef, useState, type ReactNode } from "react";
 import { expandCookSteps } from "../services/expandCookSteps";
 import { getStepVisual } from "../services/cookStepVisuals";
 import { MealVideoReference } from "./MealVideoReference";
@@ -36,6 +36,8 @@ export function CookMode({ meal, health, onClose, embedded = false }: CookModePr
   const [stepIndex, setStepIndex] = useState(0);
   const [checkedIngredients, setCheckedIngredients] = useState<Set<string>>(() => new Set());
 
+  const scrollRef = useRef<HTMLDivElement>(null);
+
   const stepVisual = useMemo(
     () => getStepVisual(steps[stepIndex] ?? "", stepIndex, steps.length, emoji, uses),
     [emoji, stepIndex, steps, uses]
@@ -43,6 +45,10 @@ export function CookMode({ meal, health, onClose, embedded = false }: CookModePr
 
   const totalTime =
     prepTime && cookTime ? `${prepTime} prep · ${cookTime} cook` : prepTime ?? cookTime ?? null;
+
+  useEffect(() => {
+    scrollRef.current?.scrollTo(0, 0);
+  }, [embedded, screen, stepIndex, name]);
 
   const toggleIngredient = (item: string) => {
     setCheckedIngredients((current) => {
@@ -66,24 +72,50 @@ export function CookMode({ meal, health, onClose, embedded = false }: CookModePr
 
   const rootClass = `cook-mode${embedded ? " cook-mode--embedded" : " cook-mode--overlay"}`;
 
-  const Paper = ({ children, className = "" }: { children: ReactNode; className?: string }) => (
-    <div className={`cookbook-page__paper cookbook-page__paper--cook ${className}`.trim()}>
-      {children}
-    </div>
-  );
+  const Surface = ({ children, className = "" }: { children: ReactNode; className?: string }) => {
+    if (embedded) {
+      return <div className={`cook-mode__content ${className}`.trim()}>{children}</div>;
+    }
+    return (
+      <div className={`cookbook-page__paper cookbook-page__paper--cook ${className}`.trim()}>
+        {children}
+      </div>
+    );
+  };
+
+  const CookHead = ({ chapter, trailing }: { chapter: string; trailing?: ReactNode }) => {
+    if (embedded) return null;
+    return (
+      <header className="cookbook-recipe__head">
+        <span className="cookbook-recipe__chapter">{chapter}</span>
+        {trailing}
+      </header>
+    );
+  };
+
+  const ScrollPad = () => (embedded ? <div className="cook-mode__scroll-pad" aria-hidden /> : null);
 
   if (screen === "overview") {
     return (
-      <div className={rootClass} role="region" aria-label={`Cook mode: ${name}`}>
-        <Paper>
-          <header className="cookbook-recipe__head">
-            <span className="cookbook-recipe__chapter">Cook mode</span>
-            <button type="button" className="cook-mode__back" onClick={onClose}>
-              ← Recipe
-            </button>
-          </header>
+      <div
+        ref={embedded ? scrollRef : undefined}
+        className={rootClass}
+        role="region"
+        aria-label={`Cook mode: ${name}`}
+      >
+        <Surface>
+          <CookHead
+            chapter="Cook mode"
+            trailing={
+              <button type="button" className="cook-mode__back" onClick={onClose}>
+                ← Recipe
+              </button>
+            }
+          />
 
           <MealPhoto meal={photoMeal} variant="hero" className="cook-mode__photo" />
+
+          {embedded && <p className="cook-mode__embedded-kicker">Cook mode</p>}
 
           <div className="cookbook-recipe__hero cookbook-recipe__hero--compact">
             <div>
@@ -141,15 +173,22 @@ export function CookMode({ meal, health, onClose, embedded = false }: CookModePr
               {allIngredientsReady ? "Start cooking" : "Start anyway"}
             </button>
           </div>
-        </Paper>
+
+          <ScrollPad />
+        </Surface>
       </div>
     );
   }
 
   if (screen === "done") {
     return (
-      <div className={rootClass} role="region" aria-label={`Cook mode complete: ${name}`}>
-        <Paper className="cook-mode__paper--center">
+      <div
+        ref={embedded ? scrollRef : undefined}
+        className={rootClass}
+        role="region"
+        aria-label={`Cook mode complete: ${name}`}
+      >
+        <Surface className="cook-mode__paper--center">
           <MealPhoto meal={photoMeal} variant="hero" className="cook-mode__photo cook-mode__photo--done" />
           <h3 className="cookbook-recipe__title">Bon appétit!</h3>
           <p className="cookbook-recipe__why">
@@ -158,7 +197,8 @@ export function CookMode({ meal, health, onClose, embedded = false }: CookModePr
           <button type="button" className="btn btn--primary" onClick={onClose}>
             ← Back to recipe
           </button>
-        </Paper>
+          <ScrollPad />
+        </Surface>
       </div>
     );
   }
@@ -168,14 +208,27 @@ export function CookMode({ meal, health, onClose, embedded = false }: CookModePr
   const progress = ((stepIndex + 1) / steps.length) * 100;
 
   return (
-    <div className={rootClass} role="region" aria-label={`Cooking ${name}, step ${stepIndex + 1}`}>
-      <Paper>
-        <header className="cookbook-recipe__head">
-          <span className="cookbook-recipe__chapter">{name}</span>
-          <span className="cookbook-recipe__page-num">
+    <div
+      ref={embedded ? scrollRef : undefined}
+      className={rootClass}
+      role="region"
+      aria-label={`Cooking ${name}, step ${stepIndex + 1}`}
+    >
+      <Surface>
+        <CookHead
+          chapter={name}
+          trailing={
+            <span className="cookbook-recipe__page-num">
+              Step {stepIndex + 1} of {steps.length}
+            </span>
+          }
+        />
+
+        {embedded && (
+          <p className="cook-mode__embedded-kicker">
             Step {stepIndex + 1} of {steps.length}
-          </span>
-        </header>
+          </p>
+        )}
 
         <div className="cook-mode__progress">
           <div className="cook-mode__progress-fill" style={{ width: `${progress}%` }} />
@@ -235,19 +288,21 @@ export function CookMode({ meal, health, onClose, embedded = false }: CookModePr
         </div>
 
         <div className="cook-mode__footer-links">
-          <button type="button" className="cook-mode__back cook-mode__back--inline" onClick={() => setScreen("overview")}>
+          <button
+            type="button"
+            className="cook-mode__back cook-mode__back--inline"
+            onClick={() => setScreen("overview")}
+          >
             Overview
           </button>
         </div>
 
         {youtubeQuery && (
-          <MealVideoReference
-            query={youtubeQuery}
-            health={health}
-            className="cook-mode__videos"
-          />
+          <MealVideoReference query={youtubeQuery} health={health} className="cook-mode__videos" />
         )}
-      </Paper>
+
+        <ScrollPad />
+      </Surface>
     </div>
   );
 }

@@ -97,13 +97,26 @@ export function CookbookReader({
   const dragging = useRef(false);
   const settleTimer = useRef<number | null>(null);
 
+  const setStageDragging = useCallback((active: boolean) => {
+    stageRef.current?.classList.toggle("cookbook-book__stage--dragging", active);
+  }, []);
+
   useEffect(() => {
     document.documentElement.classList.add("cookbook-reader-active");
     return () => {
       document.documentElement.classList.remove("cookbook-reader-active");
+      document.documentElement.classList.remove("cookbook-cooking-active");
       if (settleTimer.current) window.clearTimeout(settleTimer.current);
     };
   }, []);
+
+  useEffect(() => {
+    if (cookMode) {
+      document.documentElement.classList.add("cookbook-cooking-active");
+    } else {
+      document.documentElement.classList.remove("cookbook-cooking-active");
+    }
+  }, [cookMode]);
 
   const canGo = useCallback(
     (direction: TurnDirection) => {
@@ -160,8 +173,35 @@ export function CookbookReader({
     [pageIndex, pages, startSettle, turn?.settling]
   );
 
+  const isScrollablePage = (page: PageKind) =>
+    page.kind === "recipe" || page.kind === "toc";
+
+  const isScrollablePaperTarget = (target: EventTarget | null) => {
+    if (!(target instanceof Element)) return false;
+    return !!target.closest(
+      ".cookbook-page__paper--recipe, .cookbook-page__paper--toc, .cookbook-page__paper--cook",
+    );
+  };
+
+  const isEdgePageTurn = (clientX: number) => {
+    const rect = stageRef.current?.getBoundingClientRect();
+    if (!rect) return true;
+    const edge = rect.width * 0.18;
+    return clientX - rect.left <= edge || rect.right - clientX <= edge;
+  };
+
   const handlePointerDown = (event: ReactPointerEvent<HTMLDivElement>) => {
     if (turn?.settling || isInteractiveTarget(event.target)) return;
+
+    const currentPage = pages[pageIndex];
+    if (
+      isScrollablePage(currentPage) &&
+      isScrollablePaperTarget(event.target) &&
+      !isEdgePageTurn(event.clientX)
+    ) {
+      return;
+    }
+
     pointerId.current = event.pointerId;
     dragStart.current = { x: event.clientX, y: event.clientY };
     dragging.current = false;
@@ -174,12 +214,17 @@ export function CookbookReader({
     const dy = event.clientY - dragStart.current.y;
 
     if (!dragging.current) {
+      if (Math.abs(dy) > 8 && Math.abs(dy) > Math.abs(dx) * 1.1) {
+        pointerId.current = null;
+        return;
+      }
       if (Math.abs(dx) < 10) return;
       if (Math.abs(dy) > Math.abs(dx) * 1.15) {
         pointerId.current = null;
         return;
       }
       dragging.current = true;
+      setStageDragging(true);
       event.currentTarget.setPointerCapture(event.pointerId);
     }
 
@@ -220,6 +265,7 @@ export function CookbookReader({
 
     if (dragging.current) {
       event.currentTarget.releasePointerCapture(event.pointerId);
+      setStageDragging(false);
     }
     pointerId.current = null;
 
@@ -241,6 +287,7 @@ export function CookbookReader({
     if (pointerId.current !== event.pointerId) return;
     pointerId.current = null;
     dragging.current = false;
+    setStageDragging(false);
     if (turn && !turn.settling) setTurn(null);
   };
 
@@ -427,7 +474,7 @@ export function CookbookReader({
 
   return (
     <div
-      className="cookbook-reader"
+      className={`cookbook-reader${cookMode ? " cookbook-reader--cooking" : ""}`}
       style={
         {
           "--reader-cover": book.cover,
@@ -454,31 +501,26 @@ export function CookbookReader({
         </div>
       </header>
 
+      {cookMode ? (
+        <CookMode
+          embedded
+          health={health}
+          meal={{
+            name: cookMode.name,
+            emoji: cookMode.emoji,
+            imageMeal: cookMode,
+            steps: cookMode.steps,
+            uses: cookMode.uses,
+            prepTime: cookMode.prepTime,
+            cookTime: cookMode.cookTime,
+            youtubeQuery: cookMode.youtubeQuery,
+            nutrition: cookMode.nutrition,
+          }}
+          onClose={() => setCookMode(null)}
+        />
+      ) : (
       <div className="cookbook-book">
         <div className="cookbook-book__spine" aria-hidden />
-        {cookMode ? (
-          <div className="cookbook-book__stage cookbook-book__stage--cook">
-            <div className="cookbook-book__gutter" aria-hidden />
-            <div className="cookbook-book__sheet cookbook-book__sheet--base">
-              <CookMode
-                embedded
-                health={health}
-                meal={{
-                  name: cookMode.name,
-                  emoji: cookMode.emoji,
-                  imageMeal: cookMode,
-                  steps: cookMode.steps,
-                  uses: cookMode.uses,
-                  prepTime: cookMode.prepTime,
-                  cookTime: cookMode.cookTime,
-                  youtubeQuery: cookMode.youtubeQuery,
-                  nutrition: cookMode.nutrition,
-                }}
-                onClose={() => setCookMode(null)}
-              />
-            </div>
-          </div>
-        ) : (
         <div
           ref={stageRef}
           className="cookbook-book__stage"
@@ -505,8 +547,8 @@ export function CookbookReader({
             ← swipe →
           </p>
         </div>
-        )}
       </div>
+      )}
     </div>
   );
 }

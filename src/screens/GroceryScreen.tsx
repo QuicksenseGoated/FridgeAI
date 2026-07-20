@@ -5,13 +5,13 @@ import { parseGroceryInput } from "../services/groceryInput";
 import type { GroceryItem } from "../types/app";
 
 const VOICE_ERRORS: Record<GroceryVoiceError, string> = {
-  unsupported: "Voice recording is not supported in this browser.",
+  unsupported: "Voice is not supported in this browser. Try Chrome or Safari.",
   insecure: "Voice needs a secure connection (HTTPS).",
-  unavailable: "Add GEMINI_API_KEY to .env and restart npm run dev.",
-  "server-offline": "Can't reach the Fridge AI server. Run npm run dev and keep the terminal open.",
   "mic-denied": "Microphone access was blocked. Allow the mic in browser settings.",
   "no-speech": "Did not catch that. Tap Say it and try again.",
-  failed: "Could not understand that. Try again or type your items.",
+  network: "Voice needs an internet connection. Check Wi‑Fi or mobile data.",
+  "server-offline": "Backup voice could not reach the server. Try again in a moment.",
+  failed: "Voice hit a snag. Try again or type your items.",
 };
 
 interface GroceryScreenProps {
@@ -47,7 +47,7 @@ export function GroceryScreen({
     [onAddItems],
   );
 
-  const { listening, processing, supported, error, toggle } =
+  const { listening, processing, liveText, mode, supported, error, toggle } =
     useGroceryVoice(handleVoiceTranscript);
 
   const submitDraft = () => {
@@ -145,9 +145,20 @@ export function GroceryScreen({
             <p className="grocery-add__voice-hint">Voice works in Chrome &amp; Safari on phone.</p>
           )}
         </div>
-        {listening && (
+        {listening && mode === "speech" && (
           <p className="grocery-add__voice-status" role="status">
-            Recording… say items like &ldquo;milk, eggs, and bread&rdquo;, then tap Stop.
+            {liveText ? (
+              <>
+                Hearing: <strong>{liveText}</strong>
+              </>
+            ) : (
+              <>Listening… say items like &ldquo;milk, eggs, and bread&rdquo;, then tap Stop.</>
+            )}
+          </p>
+        )}
+        {listening && mode === "recording" && (
+          <p className="grocery-add__voice-status" role="status">
+            {liveText || "Recording… say your list, then tap Stop."}
           </p>
         )}
         {processing && (

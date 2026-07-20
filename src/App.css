@@ -55,6 +55,12 @@ html.cookbook-reader-active .tab-panel--active:has(.cookbook-reader) {
   overscroll-behavior: none;
 }
 
+/* Home pre-scan: layout already fits — only disable scroll */
+.tab-panel--active:has(.home-pre-scan) {
+  overflow: hidden;
+  overscroll-behavior: none;
+}
+
 html.cookbook-reader-active .app__viewport,
 html.cookbook-reader-active .shell,
 html.cookbook-reader-active .tab-panels {
@@ -72,6 +78,14 @@ html.cookbook-reader-active .shell {
   display: flex;
   flex-direction: column;
   padding-bottom: clamp(8px, 2vw, 12px);
+}
+
+html.cookbook-cooking-active .shell {
+  padding:
+    calc(4px + var(--safe-top))
+    calc(6px + var(--safe-right))
+    calc(6px + var(--safe-bottom))
+    calc(6px + var(--safe-left));
 }
 
 .shell {
@@ -2590,8 +2604,65 @@ html.cookbook-reader-active .shell {
 }
 
 .cook-mode--embedded {
+  flex: 1;
+  min-height: 0;
   width: 100%;
-  height: 100%;
+  overflow-y: auto;
+  overflow-x: hidden;
+  -webkit-overflow-scrolling: touch;
+  overscroll-behavior: contain;
+  touch-action: pan-y;
+  background: #faf6ef;
+  scroll-padding-top: 4px;
+  scroll-padding-bottom: 20px;
+}
+
+.cook-mode__content {
+  padding: 4px 2px 0;
+  box-sizing: border-box;
+}
+
+.cook-mode__scroll-pad {
+  height: 20px;
+  flex-shrink: 0;
+}
+
+.cook-mode__embedded-kicker {
+  margin: 0 0 6px;
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: #8b7760;
+}
+
+.cook-mode--embedded .cookbook-recipe__title {
+  margin-top: 0;
+}
+
+.cook-mode--embedded .cookbook-recipe__why {
+  -webkit-line-clamp: unset;
+  display: block;
+  overflow: visible;
+  margin-bottom: 12px;
+}
+
+.cook-mode--embedded .cookbook-recipe__actions {
+  position: static;
+  margin-top: 18px;
+  padding-top: 14px;
+  padding-bottom: 0;
+  background: transparent;
+  border-top: 1px solid rgba(139, 119, 96, 0.22);
+}
+
+.cook-mode--embedded .cook-mode__ingredient {
+  border-radius: 6px;
+  padding: 9px 10px;
+}
+
+.cook-mode--embedded .cook-mode__photo {
+  border-radius: 6px;
 }
 
 .cook-mode--overlay {
@@ -2599,8 +2670,14 @@ html.cookbook-reader-active .shell {
   inset: 0;
   z-index: 300;
   display: flex;
+  flex-direction: column;
   align-items: stretch;
-  justify-content: center;
+  justify-content: flex-start;
+  overflow-y: auto;
+  overflow-x: hidden;
+  -webkit-overflow-scrolling: touch;
+  overscroll-behavior: contain;
+  touch-action: pan-y;
   padding: 12px;
   padding-bottom: calc(12px + env(safe-area-inset-bottom, 0px));
   background: #e8dfd0;
@@ -2609,17 +2686,24 @@ html.cookbook-reader-active .shell {
 .cook-mode--overlay .cookbook-page__paper--cook {
   max-width: 28rem;
   margin: 0 auto;
-  border-radius: 4px;
+  border-radius: 2px 8px 3px 2px;
   box-shadow:
-    0 8px 28px rgba(60, 40, 10, 0.16),
+    inset -1px 0 0 rgba(139, 119, 96, 0.12),
     inset 0 0 80px rgba(139, 119, 90, 0.06);
 }
 
 .cookbook-page__paper--cook {
-  overflow-y: auto;
-  -webkit-overflow-scrolling: touch;
-  overscroll-behavior: contain;
-  touch-action: pan-y;
+  height: auto;
+  display: block;
+  overflow: visible;
+  touch-action: auto;
+  padding: clamp(12px, 3vw, 16px) clamp(10px, 3vw, 14px) clamp(14px, 3vw, 18px);
+  box-sizing: border-box;
+  scrollbar-width: none;
+}
+
+.cookbook-page__paper--cook::-webkit-scrollbar {
+  display: none;
 }
 
 .cook-mode__paper--center {
@@ -2898,14 +2982,6 @@ html.cookbook-reader-active .shell {
   font-weight: 600;
   color: #9a6b3f;
   text-decoration: none;
-}
-
-.cookbook-book__stage--cook {
-  cursor: default;
-}
-
-.cookbook-book__stage--cook .cookbook-book__swipe-hint {
-  display: none;
 }
 
 .history-card--tap {
@@ -3762,8 +3838,8 @@ html.cookbook-reader-active .shell {
   flex-direction: column;
   flex: 1;
   min-height: 0;
-  margin: -6px -6px 0;
-  border-radius: 20px;
+  margin: 0;
+  border-radius: 16px;
   overflow: hidden;
   background: #e8dfd0;
   box-shadow:
@@ -3815,6 +3891,16 @@ html.cookbook-reader-active .shell {
   opacity: 0.85;
 }
 
+.cookbook-reader--cooking {
+  background: #faf6ef;
+  border-radius: 10px;
+  box-shadow: inset 0 0 0 1px rgba(139, 119, 96, 0.14);
+}
+
+.cookbook-reader--cooking .cookbook-reader__bar {
+  flex-shrink: 0;
+}
+
 .cookbook-book {
   flex: 1;
   display: flex;
@@ -3843,9 +3929,9 @@ html.cookbook-reader-active .shell {
   min-height: 0;
   perspective: 2200px;
   perspective-origin: 50% 42%;
-  border-radius: 2px 10px 10px 2px;
+  border-radius: 2px 6px 3px 2px;
   overflow: hidden;
-  touch-action: none;
+  touch-action: pan-y pinch-zoom;
   cursor: grab;
   background:
     radial-gradient(ellipse at 18% 50%, rgba(0, 0, 0, 0.07) 0%, transparent 55%),
@@ -3856,22 +3942,14 @@ html.cookbook-reader-active .shell {
     0 10px 28px rgba(60, 40, 10, 0.14);
 }
 
-.cookbook-book__stage:has(.cookbook-page__paper--recipe)::after {
-  content: "";
-  position: absolute;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  height: min(42%, 140px);
-  background: linear-gradient(
-    180deg,
-    transparent 0%,
-    rgba(235, 227, 212, 0.55) 45%,
-    rgba(224, 214, 196, 0.92) 100%
-  );
-  pointer-events: none;
-  z-index: 1;
-  border-radius: 0 0 10px 2px;
+.cookbook-book__stage--dragging {
+  touch-action: none;
+  cursor: grabbing;
+}
+
+.cookbook-book__stage:has(.cookbook-page__paper--recipe),
+.cookbook-book__stage:has(.cookbook-page__paper--toc) {
+  cursor: default;
 }
 
 .cookbook-book__gutter {
@@ -3887,6 +3965,11 @@ html.cookbook-reader-active .shell {
 
 .cookbook-book__stage:active {
   cursor: grabbing;
+}
+
+.cookbook-book__stage:has(.cookbook-page__paper--recipe):active,
+.cookbook-book__stage:has(.cookbook-page__paper--toc):active {
+  cursor: default;
 }
 
 .cookbook-book__sheet {
@@ -4037,7 +4120,7 @@ html.cookbook-reader-active .shell {
   overflow: hidden;
   display: flex;
   flex-direction: column;
-  border-radius: 2px 8px 8px 2px;
+  border-radius: 2px 8px 3px 2px;
   background:
     repeating-linear-gradient(
       90deg,
@@ -4056,21 +4139,30 @@ html.cookbook-reader-active .shell {
   color: #3d3429;
 }
 
+.cookbook-page__paper.cookbook-page__paper--cook {
+  height: auto;
+  min-height: 0;
+  display: block;
+  overflow: visible;
+  touch-action: auto;
+  box-sizing: border-box;
+}
+
 .cookbook-page__paper--recipe {
   height: 100%;
   min-height: 0;
+  max-height: 100%;
+  display: block;
   overflow-y: auto;
+  overflow-x: hidden;
   -webkit-overflow-scrolling: touch;
   overscroll-behavior: contain;
   touch-action: pan-y;
-  padding: clamp(10px, 2.8vw, 14px) clamp(10px, 3vw, 14px) clamp(12px, 3vw, 16px);
-  justify-content: flex-start;
-  gap: clamp(6px, 1.8vw, 10px);
-  border-radius: 2px 10px 16px 2px;
+  padding: clamp(10px, 2.8vw, 14px) clamp(10px, 3vw, 14px) clamp(10px, 3vw, 12px);
+  border-radius: 2px 8px 3px 2px;
   box-shadow:
     inset -1px 0 0 rgba(139, 119, 96, 0.12),
-    inset 0 0 80px rgba(139, 119, 90, 0.06),
-    0 8px 24px rgba(60, 40, 10, 0.08);
+    inset 0 0 80px rgba(139, 119, 90, 0.06);
   scrollbar-width: none;
 }
 
@@ -4078,27 +4170,14 @@ html.cookbook-reader-active .shell {
   display: none;
 }
 
-.cookbook-page__paper--recipe::after {
-  content: "";
-  position: sticky;
-  bottom: 0;
-  display: block;
-  height: 20px;
-  margin-top: -20px;
-  background: linear-gradient(180deg, transparent, rgba(245, 239, 230, 0.98));
-  pointer-events: none;
-  border-radius: 0 0 16px 2px;
-}
-
 .cookbook-page__paper--recipe .cookbook-recipe__actions {
   position: sticky;
   bottom: 0;
-  margin-top: auto;
-  padding-top: clamp(6px, 1.8vw, 10px);
-  padding-bottom: 4px;
-  background: linear-gradient(180deg, rgba(250, 246, 239, 0) 0%, #faf6ef 28%, #faf6ef 100%);
-  flex-shrink: 0;
-  border-top: 1px solid rgba(139, 119, 96, 0.16);
+  margin-top: 16px;
+  padding-top: 10px;
+  padding-bottom: 8px;
+  background: #faf6ef;
+  border-top: 1px solid rgba(139, 119, 96, 0.24);
 }
 
 .cookbook-page__paper--cover {
@@ -4169,11 +4248,21 @@ html.cookbook-reader-active .shell {
 }
 
 .cookbook-page__paper--toc {
+  height: 100%;
+  min-height: 0;
+  max-height: 100%;
+  display: block;
   overflow-y: auto;
+  overflow-x: hidden;
   -webkit-overflow-scrolling: touch;
   overscroll-behavior: contain;
   touch-action: pan-y;
   padding: 14px 14px 16px;
+  scrollbar-width: none;
+}
+
+.cookbook-page__paper--toc::-webkit-scrollbar {
+  display: none;
 }
 
 .cookbook-page__paper--toc .cookbook-toc__title {

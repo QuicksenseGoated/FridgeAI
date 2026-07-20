@@ -63,7 +63,10 @@ export async function transcribeGroceryHandler(req: Request, res: Response) {
   }
 
   const prompt =
-    "Listen to this short grocery shopping voice memo. Transcribe exactly what the person said, as plain text only. Keep item separators like commas or the word and. Do not add commentary.";
+    "Transcribe this grocery voice memo. Return ONLY the spoken grocery items as plain text. " +
+    "Keep natural separators like commas or the word and. " +
+    "Examples: \"milk, eggs and bread\" or \"butter cheese tomatoes\". " +
+    "Do not add commentary, labels, or punctuation beyond commas.";
 
   let lastError = "Transcription failed.";
 
